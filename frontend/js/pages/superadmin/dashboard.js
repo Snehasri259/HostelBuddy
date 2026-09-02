@@ -1,123 +1,160 @@
 /**
- * HostelBuddy — Super Admin Dashboard
+ * HostelBuddy Super Admin Dashboard
+ * System-wide KPIs, charts, and activity feed
  */
-Pages["superadmin/dashboard"] = function(container) {
-  renderSuperAdminSidebar("superadmin/dashboard");
-  showPage(container, `
-    <div class="sa-main">
-      <div class="student-header"><h1>Super Admin Dashboard</h1><p>Welcome back, Administrator</p></div>
-      <div id="sa-stats" class="mb-lg"></div>
-      <div class="grid grid-2 gap-lg mb-lg">
-        <div class="card">
-          <h3 class="font-semibold mb-md">🏠 Boys Hostel</h3>
-          <div class="flex justify-between text-sm mb-sm"><span>Occupancy</span><span class="font-bold">85%</span></div>
-          <div class="progress-bar"><div class="progress-fill blue" style="width:85%;"></div></div>
-          <p class="text-xs text-secondary mt-sm">153 / 180 rooms occupied</p>
+
+const SuperAdminDashboard = {
+  data: {
+    stats: {
+      totalStudents: 450,
+      totalHostels: 4,
+      totalRooms: 320,
+      occupancyRate: 85,
+      activeComplaints: 12,
+      systemHealth: 98,
+    },
+    recentActivity: [
+      { text: 'New admin registered: Dr. Sharma', time: new Date(Date.now() - 3600000), type: 'success' },
+      { text: 'Room Block C updated', time: new Date(Date.now() - 10800000), type: 'info' },
+      { text: 'System settings changed', time: new Date(Date.now() - 86400000), type: 'warning' },
+      { text: 'Database backup completed', time: new Date(Date.now() - 172800000), type: 'success' },
+      { text: 'New hostel added: Girls Hostel B', time: new Date(Date.now() - 259200000), type: 'info' },
+    ],
+  },
+
+  render() {
+    const { stats } = this.data;
+    
+    return `
+      <div class="section-header" style="margin-bottom:24px">
+        <h2 class="section-title" style="font-size:1.5rem;display:flex;align-items:center;gap:8px">
+          ${icons.dashboard || ''}
+          Super Admin Dashboard
+        </h2>
+      </div>
+      
+      <div class="bento-grid--row1" style="margin-bottom:20px">
+        ${this.renderKPICard('users', 'Total Students', stats.totalStudents, '+8% this month', 'success')}
+        ${this.renderKPICard('building', 'Total Hostels', stats.totalHostels, '2 boys, 2 girls', 'info')}
+        ${this.renderKPICard('bed', 'Rooms', `${stats.totalRooms}`, `${stats.occupancyRate}% occupancy`, 'primary')}
+        ${this.renderKPICard('complaint', 'Active Complaints', stats.activeComplaints, stats.activeComplaints > 10 ? 'Needs attention' : 'Under control', stats.activeComplaints > 10 ? 'danger' : 'success')}
+      </div>
+      
+      <div class="bento-grid--row2" style="margin-bottom:24px">
+        <div class="bento-card fade-in stagger-5">
+          <div class="bento-icon bento-icon--success" style="width:40px;height:40px;margin-bottom:12px">
+            ${icons['check-circle'] || ''}
+          </div>
+          <div class="bento-label">System Health</div>
+          <div class="bento-value">${stats.systemHealth}%</div>
+          <div class="progress" style="margin-top:12px">
+            <div class="progress-fill progress-fill--success" style="width:${stats.systemHealth}%"></div>
+          </div>
         </div>
-        <div class="card">
-          <h3 class="font-semibold mb-md">🏠 Girls Hostel</h3>
-          <div class="flex justify-between text-sm mb-sm"><span>Occupancy</span><span class="font-bold">85%</span></div>
-          <div class="progress-bar"><div class="progress-fill green" style="width:85%;"></div></div>
-          <p class="text-xs text-secondary mt-sm">119 / 140 rooms occupied</p>
+        <div class="bento-card fade-in stagger-6">
+          <div class="bento-icon bento-icon--primary" style="width:40px;height:40px;margin-bottom:12px">
+            ${icons['bar-chart'] || ''}
+          </div>
+          <div class="bento-label">Applications This Month</div>
+          <div class="bento-value">89</div>
+          <div class="bento-trend bento-trend--up">↑ 12% from last month</div>
         </div>
       </div>
-      <div class="card">
-        <h3 class="font-semibold mb-md">📋 Recent System Activity</h3>
-        <div class="timeline">
-          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><h4>New admin registered — Dr. Mehta</h4><p>1 hour ago</p></div></div>
-          <div class="timeline-item"><div class="timeline-dot green"></div><div class="timeline-content"><h4>Room block C updated — 5 rooms added</h4><p>3 hours ago</p></div></div>
-          <div class="timeline-item"><div class="timeline-dot amber"></div><div class="timeline-content"><h4>System settings changed</h4><p>1 day ago</p></div></div>
-          <div class="timeline-item"><div class="timeline-dot purple"></div><div class="timeline-content"><h4>Bulk room allocation completed</h4><p>2 days ago</p></div></div>
+      
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:24px">
+        <div>
+          ${this.renderOccupancyChart()}
+        </div>
+        <div>
+          ${this.renderActivityFeed()}
         </div>
       </div>
-    </div>`);
-  renderStatCard("sa-stats", [
-    { icon: "👥", label: "Total Students", value: "450", color: "primary" },
-    { icon: "👨‍💼", label: "Total Admins", value: "6", color: "purple" },
-    { icon: "🛏️", label: "Total Rooms", value: "320", color: "success" },
-    { icon: "📊", label: "Occupancy Rate", value: "85%", color: "amber" },
-  ]);
-};
+      
+      ${this.renderQuickActions()}
+    `;
+  },
 
-/**
- * HostelBuddy — Super Admin Hostels
- */
-Pages["superadmin/hostels"] = function(container) {
-  renderSuperAdminSidebar("superadmin/hostels");
-  showPage(container, `
-    <div class="sa-main">
-      <div class="flex justify-between items-center mb-lg"><div><h1>🏠 Hostel Management</h1><p class="text-secondary text-sm">Manage hostel buildings and blocks</p></div><button class="btn btn-primary" onclick="Toast.show('Add hostel coming soon','info')">+ Add Hostel</button></div>
-      <div class="card"><div class="table-container"><table class="table"><thead><tr><th>Name</th><th>Total Rooms</th><th>Occupied</th><th>Available</th><th>Actions</th></tr></thead>
-      <tbody><tr><td class="font-semibold">Boys Hostel</td><td>180</td><td>153</td><td>27</td><td class="table-actions"><button class="btn btn-sm btn-secondary">Edit</button></td></tr>
-      <tr><td class="font-semibold">Girls Hostel</td><td>140</td><td>119</td><td>21</td><td class="table-actions"><button class="btn btn-sm btn-secondary">Edit</button></td></tr></tbody></table></div></div>
-    </div>`);
-};
-
-/**
- * HostelBuddy — Super Admin Admins
- */
-Pages["superadmin/admins"] = function(container) {
-  renderSuperAdminSidebar("superadmin/admins");
-  showPage(container, `
-    <div class="sa-main">
-      <div class="flex justify-between items-center mb-lg"><div><h1>👨‍💼 Admin Management</h1><p class="text-secondary text-sm">Manage hostel administrators</p></div><button class="btn btn-primary" onclick="Toast.show('Add admin coming soon','info')">+ Add Admin</button></div>
-      <div class="card"><div class="table-container"><table class="table"><thead><tr><th>Name</th><th>Email</th><th>Hostel</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody><tr><td class="font-semibold">Dr. Sharma</td><td>sharma@hostelbuddy.dev</td><td>Boys Hostel</td><td><span class="badge badge-success">Active</span></td><td class="table-actions"><button class="btn btn-sm btn-secondary">Edit</button></td></tr>
-      <tr><td class="font-semibold">Dr. Mehta</td><td>mehta@hostelbuddy.dev</td><td>Girls Hostel</td><td><span class="badge badge-success">Active</span></td><td class="table-actions"><button class="btn btn-sm btn-secondary">Edit</button></td></tr></tbody></table></div></div>
-    </div>`);
-};
-
-/**
- * HostelBuddy — Super Admin Users
- */
-Pages["superadmin/users"] = function(container) {
-  renderSuperAdminSidebar("superadmin/users");
-  showPage(container, `
-    <div class="sa-main">
-      <div class="student-header"><h1>👥 User Management</h1><p>Manage all system users</p></div>
-      <div id="sa-users-stats" class="mb-lg"></div>
-      <div class="card"><div class="table-container"><table class="table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
-      <tbody><tr><td class="font-semibold">Ravi Kumar</td><td>ravi@hostelbuddy.dev</td><td><span class="badge badge-student">Student</span></td><td><span class="badge badge-success">Active</span></td><td>Jan 10, 2025</td><td><button class="btn btn-sm btn-secondary">Edit</button></td></tr>
-      <tr><td class="font-semibold">Dr. Sharma</td><td>sharma@hostelbuddy.dev</td><td><span class="badge badge-admin">Admin</span></td><td><span class="badge badge-success">Active</span></td><td>Dec 1, 2024</td><td><button class="btn btn-sm btn-secondary">Edit</button></td></tr></tbody></table></div></div>
-    </div>`);
-  renderStatCard("sa-users-stats", [
-    { icon: "🎓", label: "Students", value: "450", color: "primary" },
-    { icon: "👨‍💼", label: "Admins", value: "6", color: "purple" },
-    { icon: "👑", label: "Super Admin", value: "1", color: "amber" },
-  ]);
-};
-
-/**
- * HostelBuddy — Super Admin Reports
- */
-Pages["superadmin/reports"] = function(container) {
-  renderSuperAdminSidebar("superadmin/reports");
-  showPage(container, `
-    <div class="sa-main">
-      <div class="student-header"><h1>📈 Reports</h1><p>System-wide analytics and reports</p></div>
-      <div class="card mb-lg"><h3 class="font-semibold mb-md">Overall Occupancy</h3><div class="flex justify-between text-sm mb-sm"><span>Total</span><span class="font-bold">85%</span></div><div class="progress-bar"><div class="progress-fill blue" style="width:85%;"></div></div><p class="text-xs text-secondary mt-sm">272 / 320 rooms occupied</p></div>
-      <div class="grid grid-2 gap-lg">
-        <div class="card"><h3 class="font-semibold mb-md">Boys Hostel</h3><div class="progress-bar"><div class="progress-fill blue" style="width:85%;"></div></div><p class="text-xs text-secondary mt-sm">153 / 180 rooms</p></div>
-        <div class="card"><h3 class="font-semibold mb-md">Girls Hostel</h3><div class="progress-bar"><div class="progress-fill green" style="width:85%;"></div></div><p class="text-xs text-secondary mt-sm">119 / 140 rooms</p></div>
+  renderKPICard(icon, label, value, trend, color) {
+    return `
+      <div class="bento-card spotlight-card fade-in stagger-${Math.floor(Math.random() * 4) + 1}" data-spotlight>
+        <div class="bento-card-header">
+          <div class="bento-icon bento-icon--${color}">${icons[icon] || ''}</div>
+        </div>
+        <div class="bento-label">${label}</div>
+        <div class="bento-value">${value}</div>
+        <div class="bento-trend bento-trend--up" style="margin-top:8px">${trend}</div>
       </div>
-    </div>`);
+    `;
+  },
+
+  renderOccupancyChart() {
+    const hostels = [
+      { name: 'Boys A', occupancy: 90 },
+      { name: 'Boys B', occupancy: 75 },
+      { name: 'Girls A', occupancy: 85 },
+      { name: 'Girls B', occupancy: 60 },
+    ];
+
+    return `
+      <div class="card fade-in stagger-5" style="padding:20px">
+        <h3 style="font-size:1rem;font-weight:600;margin-bottom:20px">Occupancy by Hostel</h3>
+        <div style="display:flex;align-items:flex-end;gap:16px;height:180px;padding:0 20px">
+          ${hostels.map(h => `
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px">
+              <span style="font-size:0.75rem;font-weight:600;color:var(--text)">${h.occupancy}%</span>
+              <div style="width:100%;background:linear-gradient(180deg,var(--primary) 0%,var(--primary-hover) 100%);border-radius:var(--radius-sm) var(--radius-sm) 0 0;height:${h.occupancy * 1.5}px;transition:height 0.5s ease"></div>
+              <span style="font-size:0.75rem;color:var(--text-muted)">${h.name}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  },
+
+  renderActivityFeed() {
+    return `
+      <div class="card fade-in stagger-6" style="padding:20px">
+        <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px">Recent Activity</h3>
+        <div class="activity-feed">
+          ${this.data.recentActivity.map((item, i) => `
+            <div class="activity-item" style="display:flex;gap:12px;padding:12px 0;${i < this.data.recentActivity.length - 1 ? 'border-bottom:1px solid var(--border)' : ''}">
+              <div class="activity-dot activity-dot--${item.type}" style="width:8px;height:8px;border-radius:50%;background:var(--${item.type === 'success' ? 'secondary' : item.type === 'warning' ? 'warning' : 'info'});margin-top:6px;flex-shrink:0"></div>
+              <div>
+                <div style="font-size:0.875rem;color:var(--text)">${item.text}</div>
+                <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">${Utils.timeAgo(item.time)}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  },
+
+  renderQuickActions() {
+    return `
+      <div class="quick-actions fade-in" style="margin-top:24px">
+        <a href="#superadmin/hostels" class="quick-action-btn quick-action-btn--primary magnetic-btn">
+          ${icons.building || ''}
+          Manage Hostels
+        </a>
+        <a href="#superadmin/reports" class="quick-action-btn quick-action-btn--secondary">
+          ${icons['bar-chart'] || ''}
+          View Reports
+        </a>
+      </div>
+    `;
+  },
+
+  init() {
+    document.querySelectorAll('[data-spotlight]').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+    });
+    console.log('[HostelBuddy] Super Admin Dashboard initialized');
+  },
 };
 
-/**
- * HostelBuddy — Super Admin Settings
- */
-Pages["superadmin/settings"] = function(container) {
-  renderSuperAdminSidebar("superadmin/settings");
-  showPage(container, `
-    <div class="sa-main">
-      <div class="student-header"><h1>⚙️ Settings</h1><p>System configuration</p></div>
-      <div class="card" style="max-width:600px;">
-        <h3 class="font-semibold mb-md">General Settings</h3>
-        <div class="input-group"><label class="form-label">Institution Name</label><input type="text" class="input" value="State University" /></div>
-        <div class="input-group"><label class="form-label">Check-in Time</label><input type="time" class="input" value="22:00" /></div>
-        <div class="input-group"><label class="form-label">Check-out Time</label><input type="time" class="input" value="06:00" /></div>
-        <div class="input-group"><label class="form-label">Max Guest Stay (nights)</label><input type="number" class="input" value="3" /></div>
-        <button class="btn btn-primary" onclick="Toast.show('Settings saved!','success')">Save Settings</button>
-      </div>
-    </div>`);
-};
+window.SuperAdminDashboard = SuperAdminDashboard;
