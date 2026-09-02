@@ -1,0 +1,253 @@
+/* ==========================================================================
+   HostelBuddy — Layout Utilities
+   Mobile-first utility classes for spacing, flexbox, grid, typography,
+   and display control. Import after variables.css and reset.css.
+
+   Breakpoints (mobile-first, min-width):
+     md  →  768px   (tablets / small laptops)
+     lg  → 1024px   (desktops)
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Flexbox Utilities
+   ========================================================================== */
+
+.flex          { display: flex; }
+.inline-flex   { display: inline-flex; }
+.flex-col      { flex-direction: column; }
+.flex-row      { flex-direction: row; }
+.flex-wrap     { flex-wrap: wrap; }
+.flex-1        { flex: 1 1 0%; }
+
+/* Alignment */
+.items-start   { align-items: flex-start; }
+.items-center  { align-items: center; }
+.items-end     { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+
+/* Justify */
+.justify-start   { justify-content: flex-start; }
+.justify-center  { justify-content: center; }
+.justify-end     { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around  { justify-content: space-around; }
+
+/* Self alignment */
+.self-start  { align-self: flex-start; }
+.self-center { align-self: center; }
+.self-end    { align-self: flex-end; }
+
+/* ==========================================================================
+   2. Gap Utilities
+   ========================================================================== */
+
+.gap-xs  { gap: var(--space-xs); }
+.gap-sm  { gap: var(--space-sm); }
+.gap-md  { gap: var(--space-md); }
+.gap-lg  { gap: var(--space-lg); }
+.gap-xl  { gap: var(--space-xl); }
+.gap-2xl { gap: var(--space-2xl); }
+
+/* ==========================================================================
+   3. Grid Utilities
+   ========================================================================== */
+
+.grid       { display: grid; }
+.grid-2     { display: grid; grid-template-columns: repeat(2, 1fr); }
+.grid-3     { display: grid; grid-template-columns: repeat(3, 1fr); }
+.grid-4     { display: grid; grid-template-columns: repeat(4, 1fr); }
+
+/* Responsive grids: collapse to fewer columns on smaller screens */
+@media (max-width: 1023px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   4. Spacing Utilities — Padding
+   Uses the spacing scale from variables.css.
+   ========================================================================== */
+
+/* All sides */
+.p-xs  { padding: var(--space-xs); }
+.p-sm  { padding: var(--space-sm); }
+.p-md  { padding: var(--space-md); }
+.p-lg  { padding: var(--space-lg); }
+.p-xl  { padding: var(--space-xl); }
+.p-2xl { padding: var(--space-2xl); }
+
+/* Horizontal */
+.px-xs  { padding-left: var(--space-xs); padding-right: var(--space-xs); }
+.px-sm  { padding-left: var(--space-sm); padding-right: var(--space-sm); }
+.px-md  { padding-left: var(--space-md); padding-right: var(--space-md); }
+.px-lg  { padding-left: var(--space-lg); padding-right: var(--space-lg); }
+.px-xl  { padding-left: var(--space-xl); padding-right: var(--space-xl); }
+.px-2xl { padding-left: var(--space-2xl); padding-right: var(--space-2xl); }
+
+/* Vertical */
+.py-xs  { padding-top: var(--space-xs); padding-bottom: var(--space-xs); }
+.py-sm  { padding-top: var(--space-sm); padding-bottom: var(--space-sm); }
+.py-md  { padding-top: var(--space-md); padding-bottom: var(--space-md); }
+.py-lg  { padding-top: var(--space-lg); padding-bottom: var(--space-lg); }
+.py-xl  { padding-top: var(--space-xl); padding-bottom: var(--space-xl); }
+.py-2xl { padding-top: var(--space-2xl); padding-bottom: var(--space-2xl); }
+
+/* ==========================================================================
+   5. Spacing Utilities — Margin
+   ========================================================================== */
+
+/* All sides */
+.m-xs  { margin: var(--space-xs); }
+.m-sm  { margin: var(--space-sm); }
+.m-md  { margin: var(--space-md); }
+.m-lg  { margin: var(--space-lg); }
+.m-xl  { margin: var(--space-xl); }
+.m-2xl { margin: var(--space-2xl); }
+
+/* Horizontal */
+.mx-xs  { margin-left: var(--space-xs); margin-right: var(--space-xs); }
+.mx-sm  { margin-left: var(--space-sm); margin-right: var(--space-sm); }
+.mx-md  { margin-left: var(--space-md); margin-right: var(--space-md); }
+.mx-lg  { margin-left: var(--space-lg); margin-right: var(--space-lg); }
+.mx-xl  { margin-left: var(--space-xl); margin-right: var(--space-xl); }
+.mx-2xl { margin-left: var(--space-2xl); margin-right: var(--space-2xl); }
+
+/* Vertical */
+.my-xs  { margin-top: var(--space-xs); margin-bottom: var(--space-xs); }
+.my-sm  { margin-top: var(--space-sm); margin-bottom: var(--space-sm); }
+.my-md  { margin-top: var(--space-md); margin-bottom: var(--space-md); }
+.my-lg  { margin-top: var(--space-lg); margin-bottom: var(--space-lg); }
+.my-xl  { margin-top: var(--space-xl); margin-bottom: var(--space-xl); }
+.my-2xl { margin-top: var(--space-2xl); margin-bottom: var(--space-2xl); }
+
+/* Auto margin helpers */
+.mx-auto { margin-left: auto; margin-right: auto; }
+.mt-auto { margin-top: auto; }
+.mb-auto { margin-bottom: auto; }
+
+/* ==========================================================================
+   6. Text Utilities
+   ========================================================================== */
+
+/* Font size */
+.text-xs  { font-size: var(--text-xs); }
+.text-sm  { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg  { font-size: var(--text-lg); }
+.text-xl  { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+.text-4xl { font-size: var(--text-4xl); }
+
+/* Font weight */
+.font-normal  { font-weight: 400; }
+.font-medium  { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold    { font-weight: 700; }
+
+/* Alignment */
+.text-left   { text-align: left; }
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+
+/* Colour tokens */
+.text-primary   { color: var(--color-primary); }
+.text-success   { color: var(--color-success); }
+.text-warning   { color: var(--color-warning); }
+.text-danger    { color: var(--color-danger); }
+.text-info      { color: var(--color-info); }
+.text-secondary { color: var(--color-text-secondary); }
+
+/* Line height */
+.leading-tight  { line-height: 1.25; }
+.leading-normal { line-height: 1.6; }
+.leading-relaxed { line-height: 1.75; }
+
+/* Truncation */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   7. Display Utilities
+   ========================================================================== */
+
+.block        { display: block; }
+.inline-block { display: inline-block; }
+.inline       { display: inline; }
+.hidden       { display: none; }
+
+/* ==========================================================================
+   8. Responsive Visibility
+   Show / hide elements at specific breakpoints.
+   ========================================================================== */
+
+/* Hidden by default, visible at md+ */
+@media (min-width: 768px) {
+  .md\:block  { display: block; }
+  .md\:flex   { display: flex; }
+  .md\:grid   { display: grid; }
+  .md\:hidden { display: none; }
+}
+
+/* Hidden by default, visible at lg+ */
+@media (min-width: 1024px) {
+  .lg\:block  { display: block; }
+  .lg\:flex   { display: flex; }
+  .lg\:grid   { display: grid; }
+  .lg\:hidden { display: none; }
+}
+
+/* Visible only on small screens (below md) */
+@media (max-width: 767px) {
+  .md\:hidden { display: block; }
+}
+
+/* ==========================================================================
+   9. Common Layout Patterns
+   ========================================================================== */
+
+/* Page wrapper — centres content with a max-width */
+.page-wrapper {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+}
+
+/* Card surface */
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-lg);
+  transition: box-shadow var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Screen-reader only — accessible hiding */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

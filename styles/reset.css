@@ -1,0 +1,129 @@
+/* ==========================================================================
+   HostelBuddy — CSS Reset / Normalize
+   A modern, opinionated reset that provides a consistent baseline
+   across all browsers before the design-system layers are applied.
+   ========================================================================== */
+
+/* ---------- Box-model sanity ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Remove default margin/padding ---------- */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- Document-level defaults ---------- */
+html {
+  /* Prevent font-size inflation on mobile */
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+
+  /* Smooth scrolling when targeting in-page anchors */
+  scroll-behavior: smooth;
+
+  /* Base font-size for rem calculations (16px default) */
+  font-size: 100%;
+}
+
+/* ---------- Body defaults ---------- */
+body {
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- Typography ---------- */
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  line-height: 1.2;
+}
+
+p {
+  overflow-wrap: break-word;
+}
+
+/* ---------- Media defaults ---------- */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* ---------- Form-element inheritance ---------- */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* ---------- Link resets ---------- */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- List resets ---------- */
+ul,
+ol {
+  list-style: none;
+}
+
+/* ---------- Table resets ---------- */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* ---------- Accessibility: reduced-motion ---------- */
+@media (prefers-reduced-motion: reduce*) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Focus-visible outline (keyboard accessibility) ---------- */
+:focus-visible {
+  outline: 2px solid var(--color-primary, #2563eb);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---------- Hidden attribute ---------- */
+[hidden] {
+  display: none !important;
+}
