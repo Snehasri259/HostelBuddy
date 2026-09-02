@@ -1,0 +1,78 @@
+/* ==========================================================================
+   HostelBuddy — Animation Utilities
+   Reusable entrance animations with stagger support.
+   Usage: Add class to element, e.g. <div class="fade-in stagger-2">
+   ========================================================================== */
+
+/* ====================================================================
+   1. Fade In — Gentle rise from below
+   ==================================================================== */
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ====================================================================
+   2. Slide Up — Stronger upward entrance
+   ==================================================================== */
+.slide-up {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ====================================================================
+   3. Scale In — Subtle pop-in effect
+   ==================================================================== */
+.scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ====================================================================
+   4. Stagger Delays — Chain animations sequentially
+   Apply alongside .fade-in, .slide-up, or .scale-in.
+   Example: <div class="fade-in stagger-1"> followed by <div class="fade-in stagger-2">
+   ========================================================================== */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+
+/* Prevent elements from flashing before their stagger fires */
+.fade-in,
+.slide-up,
+.scale-in {
+  opacity: 0; /* Start hidden; animation forwards will reveal */
+}
