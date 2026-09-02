@@ -12,327 +12,378 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/student.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/superadmin.css">
   
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
 </head>
 <body>
-  <!-- Theme Toggle -->
-  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-    </svg>
-  </button>
-
-  <div class="login-container">
-    <!-- Left Decorative Panel -->
-    <div class="login-left fade-in">
-      <div class="login-left-content">
-        <!-- Building Illustration -->
-        <div class="illustration">
-          <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Main Building -->
-            <rect x="120" y="80" width="160" height="180" rx="4" fill="rgba(255,255,255,0.15)"/>
-            <rect x="130" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="170" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="210" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="250" y="90" width="20" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="130" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="170" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="210" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="250" y="130" width="20" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="130" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="170" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="210" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="250" y="170" width="20" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-            <rect x="180" y="220" width="40" height="40" rx="2" fill="rgba(255,255,255,0.4)"/>
-            
-            <!-- Left Building -->
-            <rect x="40" y="140" width="70" height="120" rx="4" fill="rgba(255,255,255,0.1)"/>
-            <rect x="50" y="150" width="20" height="20" rx="2" fill="rgba(255,255,255,0.25)"/>
-            <rect x="80" y="150" width="20" height="20" rx="2" fill="rgba(255,255,255,0.25)"/>
-            <rect x="50" y="180" width="20" height="20" rx="2" fill="rgba(255,255,255,0.25)"/>
-            <rect x="80" y="180" width="20" height="20" rx="2" fill="rgba(255,255,255,0.25)"/>
-            
-            <!-- Right Building -->
-            <rect x="290" y="120" width="80" height="140" rx="4" fill="rgba(255,255,255,0.1)"/>
-            <rect x="300" y="130" width="25" height="25" rx="2" fill="rgba(255,255,255,0.25)"/>
-            <rect x="335" y="130" width="25" height="25" rx="2" fill="rgba(255,255,255,0.25)"/>
-            <rect x="300" y="165" width="25" height="25" rx="2" fill="rgba(255,255,255,0.25)"/>
-            <rect x="335" y="165" width="25" height="25" rx="2" fill="rgba(255,255,255,0.25)"/>
-            <rect x="300" y="200" width="25" height="25" rx="2" fill="rgba(255,255,255,0.25)"/>
-            <rect x="335" y="200" width="25" height="25" rx="2" fill="rgba(255,255,255,0.25)"/>
-            
-            <!-- Trees -->
-            <circle cx="30" cy="230" r="20" fill="rgba(255,255,255,0.2)"/>
-            <circle cx="370" cy="220" r="25" fill="rgba(255,255,255,0.2)"/>
-            
-            <!-- Ground -->
-            <rect x="0" y="260" width="400" height="40" fill="rgba(255,255,255,0.1)"/>
-          </svg>
-        </div>
-        
-        <!-- Branding -->
-        <div class="login-brand">
-          <div class="brand-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-          </div>
-          <h1 class="brand-name">HostelBuddy</h1>
-          <p class="brand-tagline">Your Hostel, Simplified</p>
-        </div>
-        
-        <!-- Features -->
-        <div class="login-features">
-          <div class="feature-item fade-in stagger-1">
-            <span class="feature-icon">🏠</span>
-            <span class="feature-text">Smart Room Allocation</span>
-          </div>
-          <div class="feature-item fade-in stagger-2">
-            <span class="feature-icon">📋</span>
-            <span class="feature-text">Easy Applications</span>
-          </div>
-          <div class="feature-item fade-in stagger-3">
-            <span class="feature-icon">🔧</span>
-            <span class="feature-text">Quick Complaints</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right Form Panel -->
-    <div class="login-right fade-in stagger-2">
-      <div class="login-form-container">
-        
-        <!-- Login Form -->
-        <div class="login-card glass-panel" id="loginCard">
-          <div class="login-header">
-            <h2 class="login-title">Welcome Back</h2>
-            <p class="login-subtitle">Sign in to your account</p>
-          </div>
-          
-          <form id="loginForm" class="login-form" novalidate>
-            <!-- Email Input -->
-            <div class="input-group">
-              <input type="email" id="loginEmail" name="email" placeholder=" " required>
-              <label for="loginEmail">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
-                Email Address
-              </label>
-              <span class="input-error" id="emailError"></span>
-            </div>
-            
-            <!-- Password Input -->
-            <div class="input-group">
-              <input type="password" id="loginPassword" name="password" placeholder=" " required>
-              <label for="loginPassword">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                Password
-              </label>
-              <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
-                <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <svg class="eye-off-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-              </button>
-              <span class="input-error" id="passwordError"></span>
-            </div>
-            
-            <!-- Remember Me & Forgot Password -->
-            <div class="login-options">
-              <label class="checkbox-label">
-                <input type="checkbox" id="rememberMe" name="remember">
-                <span class="custom-checkbox"></span>
-                <span>Remember me</span>
-              </label>
-              <a href="#" class="forgot-password">Forgot password?</a>
-            </div>
-            
-            <!-- Submit Button -->
-            <button type="submit" class="login-btn magnetic-btn ripple-btn btn-lg" id="loginBtn">
-              <span class="btn-text">Login</span>
-              <span class="btn-loader" style="display:none">
-                <svg class="spinner" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10" stroke-dasharray="31.42" stroke-dashoffset="10"></circle>
-                </svg>
-              </span>
-            </button>
-          </form>
-          
-          <!-- Divider -->
-          <div class="login-divider">
-            <span>or</span>
-          </div>
-          
-          <!-- Register Link -->
-          <div class="login-footer">
-            <p>Don't have an account? <a href="#" id="showRegister" class="link-primary">Create Account</a></p>
-          </div>
-        </div>
-
-        <!-- Register Form -->
-        <div class="login-card glass-panel register-card" id="registerCard" style="display:none">
-          <div class="login-header">
-            <h2 class="login-title">Create Account</h2>
-            <p class="login-subtitle">Join HostelBuddy today</p>
-          </div>
-          
-          <form id="registerForm" class="login-form" novalidate>
-            <!-- Full Name -->
-            <div class="input-group">
-              <input type="text" id="regName" name="name" placeholder=" " required>
-              <label for="regName">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                Full Name
-              </label>
-              <span class="input-error" id="nameError"></span>
-            </div>
-            
-            <!-- Email -->
-            <div class="input-group">
-              <input type="email" id="regEmail" name="email" placeholder=" " required>
-              <label for="regEmail">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
-                Email Address
-              </label>
-              <span class="input-error" id="regEmailError"></span>
-            </div>
-            
-            <!-- Phone -->
-            <div class="input-group">
-              <input type="tel" id="regPhone" name="phone" placeholder=" " required>
-              <label for="regPhone">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                </svg>
-                Phone Number
-              </label>
-              <span class="input-error" id="phoneError"></span>
-            </div>
-            
-            <!-- Password -->
-            <div class="input-group">
-              <input type="password" id="regPassword" name="password" placeholder=" " required>
-              <label for="regPassword">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                Password
-              </label>
-              <button type="button" class="password-toggle" data-target="regPassword" aria-label="Toggle password visibility">
-                <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <svg class="eye-off-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-              </button>
-              <div class="password-strength" id="passwordStrength"></div>
-              <span class="input-error" id="regPasswordError"></span>
-            </div>
-            
-            <!-- Confirm Password -->
-            <div class="input-group">
-              <input type="password" id="regConfirmPassword" name="confirmPassword" placeholder=" " required>
-              <label for="regConfirmPassword">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                Confirm Password
-              </label>
-              <span class="input-error" id="confirmPasswordError"></span>
-            </div>
-            
-            <!-- Role Selection -->
-            <div class="role-selection">
-              <label class="form-label">Select Role</label>
-              <div class="role-options">
-                <label class="role-option active" data-role="student">
-                  <input type="radio" name="role" value="student" checked>
-                  <span class="role-icon">🎓</span>
-                  <span class="role-name">Student</span>
-                </label>
-                <label class="role-option" data-role="admin">
-                  <input type="radio" name="role" value="admin">
-                  <span class="role-icon">👨‍💼</span>
-                  <span class="role-name">Hostel Admin</span>
-                </label>
-              </div>
-            </div>
-            
-            <!-- Submit Button -->
-            <button type="submit" class="login-btn magnetic-btn ripple-btn btn-lg" id="registerBtn">
-              <span class="btn-text">Register</span>
-              <span class="btn-loader" style="display:none">
-                <svg class="spinner" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10" stroke-dasharray="31.42" stroke-dashoffset="10"></circle>
-                </svg>
-              </span>
-            </button>
-          </form>
-          
-          <!-- Divider -->
-          <div class="login-divider">
-            <span>or</span>
-          </div>
-          
-          <!-- Login Link -->
-          <div class="login-footer">
-            <p>Already have an account? <a href="#" id="showLogin" class="link-primary">Sign In</a></p>
-          </div>
-        </div>
-        
-        <!-- Version -->
-        <div class="login-version">
-          <p>HostelBuddy v1.0</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- App Root - Pages render here -->
+  <div id="app"></div>
 
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- JavaScript Files -->
+  <!-- Core JS -->
   <script src="js/icons.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/animations.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
+  <!-- Components -->
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/components/modal.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/table.js"></script>
+  <script src="js/components/card.js"></script>
+  
+  <!-- Student Pages -->
   <script src="js/pages/login.js"></script>
+  <script src="js/pages/student/dashboard.js"></script>
+  <script src="js/pages/student/application.js"></script>
+  <script src="js/pages/student/myhostel.js"></script>
+  <script src="js/pages/student/complaints.js"></script>
+  <script src="js/pages/student/visitors.js"></script>
+  <script src="js/pages/student/announcements.js"></script>
+  <script src="js/pages/student/profile.js"></script>
+  
+  <!-- Admin Pages -->
+  <script src="js/pages/admin/dashboard.js"></script>
+  <script src="js/pages/admin/applications.js"></script>
+  <script src="js/pages/admin/allocation.js"></script>
+  <script src="js/pages/admin/rooms.js"></script>
+  <script src="js/pages/admin/complaints.js"></script>
+  <script src="js/pages/admin/visitors.js"></script>
+  <script src="js/pages/admin/announcements.js"></script>
+  <script src="js/pages/admin/reports.js"></script>
+  
+  <!-- Super Admin Pages -->
+  <script src="js/pages/superadmin/dashboard.js"></script>
+  <script src="js/pages/superadmin/hostels.js"></script>
+  <script src="js/pages/superadmin/admins.js"></script>
+  <script src="js/pages/superadmin/users.js"></script>
+  <script src="js/pages/superadmin/settings.js"></script>
+  
+  <!-- App Init -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const app = document.getElementById('app');
+      const hash = window.location.hash.slice(1) || 'login';
+      const user = JSON.parse(localStorage.getItem('hb_user') || 'null');
+      
+      // Route based on hash
+      if (!hash || hash === 'login') {
+        if (user && user.token) {
+          // Already logged in, redirect to dashboard
+          window.location.hash = `#${user.role}/dashboard`;
+          return;
+        }
+        // Show login page
+        renderLoginPage(app);
+      } else if (user && user.token) {
+        // Protected route - render dashboard layout
+        const [role, page] = hash.includes('/') ? hash.split('/') : [hash, 'dashboard'];
+        renderDashboard(app, role, page);
+      } else {
+        // Not logged in, redirect to login
+        window.location.hash = '#login';
+        renderLoginPage(app);
+      }
+      
+      // Handle hash changes
+      window.addEventListener('hashchange', () => {
+        const newHash = window.location.hash.slice(1) || 'login';
+        const currentUser = JSON.parse(localStorage.getItem('hb_user') || 'null');
+        
+        if (!newHash || newHash === 'login') {
+          if (currentUser && currentUser.token) {
+            window.location.hash = `#${currentUser.role}/dashboard`;
+            return;
+          }
+          renderLoginPage(app);
+        } else if (currentUser && currentUser.token) {
+          const [role, page] = newHash.includes('/') ? newHash.split('/') : [newHash, 'dashboard'];
+          renderDashboard(app, role, page);
+        } else {
+          window.location.hash = '#login';
+        }
+      });
+    });
+    
+    // ============================================
+    // LOGIN PAGE RENDERER
+    // ============================================
+    function renderLoginPage(container) {
+      container.innerHTML = `
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <div class="login-container">
+          <div class="login-left fade-in">
+            <div class="login-left-content">
+              <div class="illustration">
+                <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="120" y="80" width="160" height="180" rx="4" fill="rgba(255,255,255,0.15)"/>
+                  <rect x="130" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="170" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="210" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="130" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="170" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="210" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="130" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="170" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="210" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                  <rect x="180" y="220" width="40" height="40" rx="2" fill="rgba(255,255,255,0.4)"/>
+                  <rect x="40" y="140" width="70" height="120" rx="4" fill="rgba(255,255,255,0.1)"/>
+                  <rect x="290" y="120" width="80" height="140" rx="4" fill="rgba(255,255,255,0.1)"/>
+                </svg>
+              </div>
+              <div class="login-brand">
+                <div class="brand-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                </div>
+                <h1 class="brand-name">HostelBuddy</h1>
+                <p class="brand-tagline">Your Hostel, Simplified</p>
+              </div>
+              <div class="login-features">
+                <div class="feature-item fade-in stagger-1">
+                  <span class="feature-icon">🏠</span>
+                  <span class="feature-text">Smart Room Allocation</span>
+                </div>
+                <div class="feature-item fade-in stagger-2">
+                  <span class="feature-icon">📋</span>
+                  <span class="feature-text">Easy Applications</span>
+                </div>
+                <div class="feature-item fade-in stagger-3">
+                  <span class="feature-icon">🔧</span>
+                  <span class="feature-text">Quick Complaints</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="login-right fade-in stagger-2">
+            <div class="login-form-container">
+              <div class="login-card glass-panel" id="loginCard">
+                <div class="login-header">
+                  <h2 class="login-title">Welcome Back</h2>
+                  <p class="login-subtitle">Sign in to your account</p>
+                </div>
+                
+                <form id="loginForm" class="login-form" novalidate>
+                  <div class="input-group">
+                    <input type="email" id="loginEmail" name="email" placeholder=" " required>
+                    <label for="loginEmail">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                      Email Address
+                    </label>
+                    <span class="input-error" id="emailError"></span>
+                  </div>
+                  
+                  <div class="input-group">
+                    <input type="password" id="loginPassword" name="password" placeholder=" " required>
+                    <label for="loginPassword">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                      Password
+                    </label>
+                    <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
+                      <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      <svg class="eye-off-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    </button>
+                    <span class="input-error" id="passwordError"></span>
+                  </div>
+                  
+                  <div class="login-options">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="rememberMe" name="remember">
+                      <span class="custom-checkbox"></span>
+                      <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                  </div>
+                  
+                  <button type="submit" class="login-btn magnetic-btn ripple-btn btn-lg" id="loginBtn">
+                    <span class="btn-text">Login</span>
+                    <span class="btn-loader" style="display:none">
+                      <svg class="spinner" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" stroke-dasharray="31.42" stroke-dashoffset="10"></circle>
+                      </svg>
+                    </span>
+                  </button>
+                </form>
+                
+                <div class="login-divider">
+                  <span>or</span>
+                </div>
+                
+                <div class="login-footer">
+                  <p>Don't have an account? <a href="#" id="showRegister" class="link-primary">Create Account</a></p>
+                </div>
+              </div>
+              
+              <div class="login-version">
+                <p>HostelBuddy v1.0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Initialize login page
+      if (typeof LoginPage !== 'undefined') {
+        LoginPage.init();
+      }
+    }
+    
+    // ============================================
+    // DASHBOARD LAYOUT RENDERER
+    // ============================================
+    function renderDashboard(container, role, page) {
+      const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
+      
+      // Build page content
+      let pageContent = '';
+      const pageKey = `${role}/${page}`;
+      
+      // Get page renderer from registry
+      const pageRenderers = {
+        // Student pages
+        'student/dashboard': () => StudentDashboard.render(),
+        'student/application': () => StudentApplication.render(),
+        'student/myhostel': () => StudentMyHostel.render(),
+        'student/complaints': () => StudentComplaints.render(),
+        'student/visitors': () => StudentVisitors.render(),
+        'student/announcements': () => StudentAnnouncements.render(),
+        'student/profile': () => StudentProfile.render(),
+        // Admin pages
+        'admin/dashboard': () => AdminDashboard.render(),
+        'admin/applications': () => AdminApplications.render(),
+        'admin/allocation': () => AdminAllocation.render(),
+        'admin/rooms': () => AdminRooms.render(),
+        'admin/complaints': () => AdminComplaints.render(),
+        'admin/visitors': () => AdminVisitors.render(),
+        'admin/announcements': () => AdminAnnouncements.render(),
+        'admin/reports': () => Reports.render(),
+        // Super Admin pages
+        'superadmin/dashboard': () => SuperAdminDashboard.render(),
+        'superadmin/hostels': () => SuperAdminHostels.render(),
+        'superadmin/admins': () => SuperAdminAdmins.render(),
+        'superadmin/users': () => SuperAdminUsers.render(),
+        'superadmin/reports': () => Reports.render(),
+        'superadmin/settings': () => SuperAdminSettings.render(),
+      };
+      
+      const renderer = pageRenderers[pageKey];
+      if (renderer) {
+        pageContent = renderer();
+      } else {
+        pageContent = '<div class="container p-lg"><h2>Page not found</h2></div>';
+      }
+      
+      // Page titles
+      const pageTitles = {
+        'dashboard': 'Dashboard',
+        'application': 'Hostel Application',
+        'myhostel': 'My Hostel',
+        'complaints': 'Complaints',
+        'visitors': 'Visitors',
+        'announcements': 'Announcements',
+        'profile': 'Profile',
+        'applications': 'Applications',
+        'allocation': 'Room Allocation',
+        'rooms': 'Rooms',
+        'reports': 'Reports',
+        'hostels': 'Hostels',
+        'admins': 'Admins',
+        'users': 'Users',
+        'settings': 'Settings',
+      };
+      
+      const pageTitle = pageTitles[page] || 'Dashboard';
+      
+      // Render full layout
+      container.innerHTML = `
+        <div class="app-layout">
+          ${Sidebar.render(role, page)}
+          <div class="main-content">
+            ${Navbar.render(pageTitle, user)}
+            <div class="page-content" id="pageContent">
+              ${pageContent}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Initialize page-specific JS
+      setTimeout(() => {
+        const initFunctions = {
+          'student/dashboard': () => StudentDashboard.init?.(),
+          'student/application': () => StudentApplication.init?.(),
+          'student/myhostel': () => StudentMyHostel.init?.(),
+          'student/complaints': () => StudentComplaints.init?.(),
+          'student/visitors': () => StudentVisitors.init?.(),
+          'student/announcements': () => StudentAnnouncements.init?.(),
+          'student/profile': () => StudentProfile.init?.(),
+          'admin/dashboard': () => AdminDashboard.init?.(),
+          'admin/applications': () => AdminApplications.init?.(),
+          'admin/allocation': () => AdminAllocation.init?.(),
+          'admin/rooms': () => AdminRooms.init?.(),
+          'admin/complaints': () => AdminComplaints.init?.(),
+          'admin/visitors': () => AdminVisitors.init?.(),
+          'admin/announcements': () => AdminAnnouncements.init?.(),
+          'admin/reports': () => Reports.init?.(),
+          'superadmin/dashboard': () => SuperAdminDashboard.init?.(),
+          'superadmin/hostels': () => SuperAdminHostels.init?.(),
+          'superadmin/admins': () => SuperAdminAdmins.init?.(),
+          'superadmin/users': () => SuperAdminUsers.init?.(),
+          'superadmin/reports': () => Reports.init?.(),
+          'superadmin/settings': () => SuperAdminSettings.init?.(),
+        };
+        
+        if (initFunctions[pageKey]) {
+          initFunctions[pageKey]();
+        }
+        
+        Sidebar.init?.();
+        Navbar.init?.();
+      }, 100);
+    }
+  </script>
 </body>
 </html>

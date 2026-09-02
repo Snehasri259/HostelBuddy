@@ -424,7 +424,6 @@ const LoginPage = {
       // Redirect after delay
       setTimeout(() => {
         window.location.hash = `#${role}/dashboard`;
-        window.location.reload();
       }, 1000);
       
     } catch (error) {
@@ -484,7 +483,6 @@ const LoginPage = {
       // Redirect after delay
       setTimeout(() => {
         window.location.hash = `#${role}/dashboard`;
-        window.location.reload();
       }, 1000);
       
     } catch (error) {
