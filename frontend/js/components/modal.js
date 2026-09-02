@@ -40,3 +40,8 @@ function confirmModal(title, message) {
 
 function _escHandler(e) { if (e.key === "Escape") closeModal(); }
 window._confirmResolve = (v) => { closeModal(); if (_modalResolve) { _modalResolve(v); _modalResolve = null; } };
+
+// Export for use
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.confirmModal = confirmModal;

@@ -52,3 +52,17 @@ function showPage(container, html) { container.innerHTML = html; }
 window.App = App;
 window.Pages = Pages;
 window.showPage = showPage;
+
+// Global showToast helper
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer') || document.body;
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 300ms ease forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+window.showToast = showToast;

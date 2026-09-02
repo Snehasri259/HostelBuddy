@@ -22,3 +22,5 @@ const Toast = {
     }, 3000);
   }
 };
+
+window.Toast = Toast;
