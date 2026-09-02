@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HostelBuddy — Hostel Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/login.css" />
+  <link rel="stylesheet" href="css/student.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="css/superadmin.css" />
+</head>
+<body>
+
+  <!-- App content rendered by JS -->
+  <div id="app-content"></div>
+
+  <!-- Core JS -->
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Components -->
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/modal.js"></script>
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/table.js"></script>
+  <script src="js/components/card.js"></script>
+
+  <!-- Pages -->
+  <script src="js/pages/login.js"></script>
+  <script src="js/pages/student/dashboard.js"></script>
+  <script src="js/pages/student/application.js"></script>
+  <script src="js/pages/student/myhostel.js"></script>
+  <script src="js/pages/admin/dashboard.js"></script>
+  <script src="js/pages/admin/applications.js"></script>
+  <script src="js/pages/superadmin/dashboard.js"></script>
+
+  <!-- Boot -->
+  <script>App.initApp();</script>
+</body>
+</html>
