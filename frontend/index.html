@@ -77,7 +77,7 @@
       const hash = window.location.hash.slice(1) || 'login';
       // Helper: read user from localStorage OR sessionStorage
       function getUser() {
-        return JSON.parse(localStorage.getItem('hb_user') || sessionStorage.getItem('hb_user') || 'null');
+        return JSON.parse(localStorage.getItem('hb_user') || 'null');
       }
       const user = getUser();
       

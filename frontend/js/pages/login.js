@@ -389,8 +389,7 @@ const LoginPage = {
       // Mock login (replace with actual API call)
       console.log('[HostelBuddy] Login attempt:', { email, remember });
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       // Mock successful login
       let role = 'student';
@@ -414,17 +413,13 @@ const LoginPage = {
         token: 'mock_token_' + Date.now(),
       };
       
-      // Store user
-      const storage = remember ? localStorage : sessionStorage;
-      storage.setItem('hb_user', JSON.stringify(user));
+      // Always store in localStorage for SPA reliability
+      localStorage.setItem('hb_user', JSON.stringify(user));
       
-      // Show success message
       this.showToast('Login successful! Redirecting...', 'success');
       
-      // Redirect after delay
-      setTimeout(() => {
-        window.location.hash = `#${role}/dashboard`;
-      }, 1000);
+      // Redirect immediately
+      window.location.hash = `#${role}/dashboard`;
       
     } catch (error) {
       console.error('[HostelBuddy] Login error:', error);
@@ -477,13 +472,10 @@ const LoginPage = {
       // Store user
       localStorage.setItem('hb_user', JSON.stringify(user));
       
-      // Show success message
       this.showToast('Registration successful! Welcome to HostelBuddy.', 'success');
       
-      // Redirect after delay
-      setTimeout(() => {
-        window.location.hash = `#${role}/dashboard`;
-      }, 1000);
+      // Redirect immediately
+      window.location.hash = `#${role}/dashboard`;
       
     } catch (error) {
       console.error('[HostelBuddy] Registration error:', error);
