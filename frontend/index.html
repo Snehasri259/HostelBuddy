@@ -275,114 +275,144 @@
     // DASHBOARD LAYOUT RENDERER
     // ============================================
     function renderDashboard(container, role, page) {
-      const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
-      
-      // Build page content
-      let pageContent = '';
-      const pageKey = `${role}/${page}`;
-      
-      // Get page renderer from registry
-      const pageRenderers = {
-        // Student pages
-        'student/dashboard': () => StudentDashboard.render(),
-        'student/application': () => StudentApplication.render(),
-        'student/myhostel': () => StudentMyHostel.render(),
-        'student/complaints': () => StudentComplaints.render(),
-        'student/visitors': () => StudentVisitors.render(),
-        'student/announcements': () => StudentAnnouncements.render(),
-        'student/profile': () => StudentProfile.render(),
-        // Admin pages
-        'admin/dashboard': () => AdminDashboard.render(),
-        'admin/applications': () => AdminApplications.render(),
-        'admin/allocation': () => AdminAllocation.render(),
-        'admin/rooms': () => AdminRooms.render(),
-        'admin/complaints': () => AdminComplaints.render(),
-        'admin/visitors': () => AdminVisitors.render(),
-        'admin/announcements': () => AdminAnnouncements.render(),
-        'admin/reports': () => Reports.render(),
-        // Super Admin pages
-        'superadmin/dashboard': () => SuperAdminDashboard.render(),
-        'superadmin/hostels': () => SuperAdminHostels.render(),
-        'superadmin/admins': () => SuperAdminAdmins.render(),
-        'superadmin/users': () => SuperAdminUsers.render(),
-        'superadmin/reports': () => Reports.render(),
-        'superadmin/settings': () => SuperAdminSettings.render(),
-      };
-      
-      const renderer = pageRenderers[pageKey];
-      if (renderer) {
-        pageContent = renderer();
-      } else {
-        pageContent = '<div class="container p-lg"><h2>Page not found</h2></div>';
-      }
-      
-      // Page titles
-      const pageTitles = {
-        'dashboard': 'Dashboard',
-        'application': 'Hostel Application',
-        'myhostel': 'My Hostel',
-        'complaints': 'Complaints',
-        'visitors': 'Visitors',
-        'announcements': 'Announcements',
-        'profile': 'Profile',
-        'applications': 'Applications',
-        'allocation': 'Room Allocation',
-        'rooms': 'Rooms',
-        'reports': 'Reports',
-        'hostels': 'Hostels',
-        'admins': 'Admins',
-        'users': 'Users',
-        'settings': 'Settings',
-      };
-      
-      const pageTitle = pageTitles[page] || 'Dashboard';
-      
-      // Render full layout
-      container.innerHTML = `
-        <div class="app-layout">
-          ${Sidebar.render(role, page)}
-          <div class="main-content">
-            ${Navbar.render(pageTitle, user)}
-            <div class="page-content" id="pageContent">
-              ${pageContent}
-            </div>
-          </div>
-        </div>
-      `;
-      
-      // Initialize page-specific JS
-      setTimeout(() => {
-        const initFunctions = {
-          'student/dashboard': () => StudentDashboard.init?.(),
-          'student/application': () => StudentApplication.init?.(),
-          'student/myhostel': () => StudentMyHostel.init?.(),
-          'student/complaints': () => StudentComplaints.init?.(),
-          'student/visitors': () => StudentVisitors.init?.(),
-          'student/announcements': () => StudentAnnouncements.init?.(),
-          'student/profile': () => StudentProfile.init?.(),
-          'admin/dashboard': () => AdminDashboard.init?.(),
-          'admin/applications': () => AdminApplications.init?.(),
-          'admin/allocation': () => AdminAllocation.init?.(),
-          'admin/rooms': () => AdminRooms.init?.(),
-          'admin/complaints': () => AdminComplaints.init?.(),
-          'admin/visitors': () => AdminVisitors.init?.(),
-          'admin/announcements': () => AdminAnnouncements.init?.(),
-          'admin/reports': () => Reports.init?.(),
-          'superadmin/dashboard': () => SuperAdminDashboard.init?.(),
-          'superadmin/hostels': () => SuperAdminHostels.init?.(),
-          'superadmin/admins': () => SuperAdminAdmins.init?.(),
-          'superadmin/users': () => SuperAdminUsers.init?.(),
-          'superadmin/reports': () => Reports.init?.(),
-          'superadmin/settings': () => SuperAdminSettings.init?.(),
+      try {
+        const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
+        
+        // Build page content
+        let pageContent = '';
+        const pageKey = `${role}/${page}`;
+        
+        // Get page renderer from registry
+        const pageRenderers = {
+          // Student pages
+          'student/dashboard': () => StudentDashboard.render(),
+          'student/application': () => StudentApplication.render(),
+          'student/myhostel': () => StudentMyHostel.render(),
+          'student/complaints': () => StudentComplaints.render(),
+          'student/visitors': () => StudentVisitors.render(),
+          'student/announcements': () => StudentAnnouncements.render(),
+          'student/profile': () => StudentProfile.render(),
+          // Admin pages
+          'admin/dashboard': () => AdminDashboard.render(),
+          'admin/applications': () => AdminApplications.render(),
+          'admin/allocation': () => AdminAllocation.render(),
+          'admin/rooms': () => AdminRooms.render(),
+          'admin/complaints': () => AdminComplaints.render(),
+          'admin/visitors': () => AdminVisitors.render(),
+          'admin/announcements': () => AdminAnnouncements.render(),
+          'admin/reports': () => Reports.render(),
+          // Super Admin pages
+          'superadmin/dashboard': () => SuperAdminDashboard.render(),
+          'superadmin/hostels': () => SuperAdminHostels.render(),
+          'superadmin/admins': () => SuperAdminAdmins.render(),
+          'superadmin/users': () => SuperAdminUsers.render(),
+          'superadmin/reports': () => Reports.render(),
+          'superadmin/settings': () => SuperAdminSettings.render(),
         };
         
-        if (initFunctions[pageKey]) {
-          initFunctions[pageKey]();
+        const renderer = pageRenderers[pageKey];
+        if (renderer) {
+          try {
+            pageContent = renderer();
+          } catch (e) {
+            console.error('[HostelBuddy] Page render error:', pageKey, e);
+            pageContent = '<div style="padding:40px;text-align:center"><h2>Page Error</h2><p style="color:#78716C">Failed to render ' + pageKey + '</p><pre style="text-align:left;background:#f5f0e6;padding:16px;border-radius:8px;margin-top:16px;overflow:auto;font-size:13px">' + e.message + '</pre></div>';
+          }
+        } else {
+          pageContent = '<div style="padding:40px;text-align:center"><h2>Page not found</h2><p style="color:#78716C">The page "' + pageKey + '" does not exist.</p></div>';
         }
         
-        Sidebar.init?.();
-        Navbar.init?.();
-      }, 100);
+        // Page titles
+        const pageTitles = {
+          'dashboard': 'Dashboard',
+          'application': 'Hostel Application',
+          'myhostel': 'My Hostel',
+          'complaints': 'Complaints',
+          'visitors': 'Visitors',
+          'announcements': 'Announcements',
+          'profile': 'Profile',
+          'applications': 'Applications',
+          'allocation': 'Room Allocation',
+          'rooms': 'Rooms',
+          'reports': 'Reports',
+          'hostels': 'Hostels',
+          'admins': 'Admins',
+          'users': 'Users',
+          'settings': 'Settings',
+        };
+        
+        const pageTitle = pageTitles[page] || 'Dashboard';
+        
+        // Render sidebar
+        let sidebarHTML = '';
+        try {
+          sidebarHTML = Sidebar.render(role, page);
+        } catch (e) {
+          console.error('[HostelBuddy] Sidebar render error:', e);
+        }
+        
+        // Render navbar
+        let navbarHTML = '';
+        try {
+          navbarHTML = Navbar.render(pageTitle, user);
+        } catch (e) {
+          console.error('[HostelBuddy] Navbar render error:', e);
+        }
+        
+        // Render full layout
+        container.innerHTML = `
+          <div class="app-layout">
+            ${sidebarHTML}
+            <div class="main-content">
+              ${navbarHTML}
+              <div class="page-content" id="pageContent">
+                ${pageContent}
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Initialize page-specific JS
+        setTimeout(() => {
+          try {
+            const initFunctions = {
+              'student/dashboard': () => StudentDashboard.init?.(),
+              'student/application': () => StudentApplication.init?.(),
+              'student/myhostel': () => StudentMyHostel.init?.(),
+              'student/complaints': () => StudentComplaints.init?.(),
+              'student/visitors': () => StudentVisitors.init?.(),
+              'student/announcements': () => StudentAnnouncements.init?.(),
+              'student/profile': () => StudentProfile.init?.(),
+              'admin/dashboard': () => AdminDashboard.init?.(),
+              'admin/applications': () => AdminApplications.init?.(),
+              'admin/allocation': () => AdminAllocation.init?.(),
+              'admin/rooms': () => AdminRooms.init?.(),
+              'admin/complaints': () => AdminComplaints.init?.(),
+              'admin/visitors': () => AdminVisitors.init?.(),
+              'admin/announcements': () => AdminAnnouncements.init?.(),
+              'admin/reports': () => Reports.init?.(),
+              'superadmin/dashboard': () => SuperAdminDashboard.init?.(),
+              'superadmin/hostels': () => SuperAdminHostels.init?.(),
+              'superadmin/admins': () => SuperAdminAdmins.init?.(),
+              'superadmin/users': () => SuperAdminUsers.init?.(),
+              'superadmin/reports': () => Reports.init?.(),
+              'superadmin/settings': () => SuperAdminSettings.init?.(),
+            };
+            
+            if (initFunctions[pageKey]) {
+              initFunctions[pageKey]();
+            }
+            
+            Sidebar.init?.();
+            Navbar.init?.();
+          } catch (e) {
+            console.error('[HostelBuddy] Init error:', e);
+          }
+        }, 100);
+      } catch (e) {
+        console.error('[HostelBuddy] renderDashboard fatal error:', e);
+        container.innerHTML = '<div style="padding:60px;text-align:center;font-family:DM Sans,sans-serif"><h1 style="color:#D97706">Something went wrong</h1><p style="color:#78716C;margin:16px 0">The dashboard could not load. Please try refreshing.</p><pre style="text-align:left;background:#f5f0e6;padding:16px;border-radius:8px;max-width:600px;margin:16px auto;overflow:auto;font-size:13px">' + e.message + '</pre><a href="#login" style="display:inline-block;margin-top:16px;padding:10px 24px;background:#D97706;color:#fff;border-radius:999px;text-decoration:none;font-weight:600">Back to Login</a></div>';
+      }
     }
   </script>
 </body>

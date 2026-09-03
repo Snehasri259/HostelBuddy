@@ -544,14 +544,6 @@ const LoginPage = {
   }
 };
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  // Check if already logged in
-  const user = JSON.parse(localStorage.getItem('hb_user') || sessionStorage.getItem('hb_user') || 'null');
-  if (user && user.token) {
-    window.location.hash = `#${user.role}/dashboard`;
-    return;
-  }
-  
-  LoginPage.init();
-});
+// Note: LoginPage.init() is called by renderLoginPage() in index.html
+// after the login form DOM is created. Do not call init() here on DOMContentLoaded
+// because the login form elements do not exist yet at that point.
