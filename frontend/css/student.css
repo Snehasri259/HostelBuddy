@@ -1,7 +1,454 @@
 /**
  * HostelBuddy Student & Shared Pages Styles
- * Complaints, Visitors, Announcements, and shared components
+ * Dashboard layout, Complaints, Visitors, Announcements
  */
+
+/* ====================================================================
+   DASHBOARD LAYOUT
+   ==================================================================== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 320px;
+  }
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ====================================================================
+   WELCOME BANNER
+   ==================================================================== */
+.welcome-banner {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-banner::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.welcome-subtitle {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  margin-bottom: 12px;
+}
+
+.welcome-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* ====================================================================
+   QUICK ACTIONS
+   ==================================================================== */
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.quick-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-action-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.quick-action-btn--primary {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(217,119,6,0.3);
+}
+
+.quick-action-btn--primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(217,119,6,0.4);
+}
+
+.quick-action-btn--secondary {
+  background: var(--bg-secondary);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-action-btn--secondary:hover {
+  background: var(--hover);
+  transform: translateY(-1px);
+}
+
+/* ====================================================================
+   BENTO / STAT CARDS
+   ==================================================================== */
+.stat-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bento-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.bento-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.bento-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.bento-icon--primary {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.bento-icon--secondary {
+  background: var(--secondary-light);
+  color: var(--secondary);
+}
+
+.bento-icon--success {
+  background: rgba(16,185,129,0.1);
+  color: #10B981;
+}
+
+.bento-icon--warning {
+  background: var(--warning-light);
+  color: var(--warning);
+}
+
+.bento-icon--danger {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.bento-icon--info {
+  background: var(--info-light);
+  color: var(--info);
+}
+
+.bento-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.bento-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.bento-value--text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.1rem;
+}
+
+.bento-trend {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+.bento-trend--up {
+  color: #10B981;
+}
+
+.bento-trend--down {
+  color: var(--danger);
+}
+
+/* ====================================================================
+   SECTION HEADERS
+   ==================================================================== */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.section-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.section-link:hover {
+  text-decoration: underline;
+}
+
+/* ====================================================================
+   TIMELINE
+   ==================================================================== */
+.timeline-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  position: relative;
+}
+
+.timeline-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: -16px;
+  width: 2px;
+  background: var(--border);
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-dot--success { background: #10B981; }
+.timeline-dot--info { background: var(--info); }
+.timeline-dot--warning { background: var(--warning); }
+.timeline-dot--danger { background: var(--danger); }
+
+.timeline-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+
+.timeline-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.timeline-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.timeline-text {
+  flex: 1;
+}
+
+.timeline-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.timeline-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ====================================================================
+   ANNOUNCEMENTS PREVIEW (Dashboard)
+   ==================================================================== */
+.announcements-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.announcement-preview {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.announcement-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--warning);
+  margin-bottom: 8px;
+}
+
+/* ====================================================================
+   HOSTEL SUMMARY (Dashboard)
+   ==================================================================== */
+.hostel-summary {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.hostel-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.hostel-summary-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hostel-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.hostel-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hostel-detail-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hostel-detail-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.roommates-section {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.roommates-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.roommate-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 /* ====================================================================
    SHARED: FILTER TABS
