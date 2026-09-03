@@ -75,23 +75,23 @@
     document.addEventListener('DOMContentLoaded', () => {
       const app = document.getElementById('app');
       const hash = window.location.hash.slice(1) || 'login';
-      const user = JSON.parse(localStorage.getItem('hb_user') || 'null');
+      // Helper: read user from localStorage OR sessionStorage
+      function getUser() {
+        return JSON.parse(localStorage.getItem('hb_user') || sessionStorage.getItem('hb_user') || 'null');
+      }
+      const user = getUser();
       
       // Route based on hash
       if (!hash || hash === 'login') {
         if (user && user.token) {
-          // Already logged in, redirect to dashboard
           window.location.hash = `#${user.role}/dashboard`;
           return;
         }
-        // Show login page
         renderLoginPage(app);
       } else if (user && user.token) {
-        // Protected route - render dashboard layout
         const [role, page] = hash.includes('/') ? hash.split('/') : [hash, 'dashboard'];
         renderDashboard(app, role, page);
       } else {
-        // Not logged in, redirect to login
         window.location.hash = '#login';
         renderLoginPage(app);
       }
@@ -99,7 +99,7 @@
       // Handle hash changes
       window.addEventListener('hashchange', () => {
         const newHash = window.location.hash.slice(1) || 'login';
-        const currentUser = JSON.parse(localStorage.getItem('hb_user') || 'null');
+        const currentUser = getUser();
         
         if (!newHash || newHash === 'login') {
           if (currentUser && currentUser.token) {
