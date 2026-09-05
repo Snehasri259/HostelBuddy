@@ -90,5 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.head.appendChild(style);
 })();
 
+/* Alias toggle = toggleTheme for navbar compatibility */
+Theme.toggle = Theme.toggleTheme;
+
 /* Export */
 window.Theme = Theme;

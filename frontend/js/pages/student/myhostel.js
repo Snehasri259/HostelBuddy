@@ -17,7 +17,7 @@ const StudentMyHostel = {
 
   roommates: [
     { name: 'Amit Singh', initials: 'AS', course: 'B.Tech CS', year: '3rd Year', bed: 1 },
-    { name: 'Priya Patel', initials: 'PP', course: 'B.Tech IT', year: '3rd Year', bed: 2 },
+    { name: 'Rahul Verma', initials: 'RV', course: 'B.Tech ECE', year: '3rd Year', bed: 2 },
   ],
 
   rules: [
@@ -226,7 +226,7 @@ const StudentMyHostel = {
   renderRoomDiagram() {
     const beds = [
       { num: 1, x: 20, y: 30, occupied: true, occupant: 'Amit Singh' },
-      { num: 2, x: 120, y: 30, occupied: true, occupant: 'Priya Patel' },
+      { num: 2, x: 120, y: 30, occupied: true, occupant: 'Rahul Verma' },
       { num: 3, x: 220, y: 30, occupied: true, occupant: 'You', isCurrent: true },
       { num: 4, x: 20, y: 120, occupied: false, occupant: '' },
     ];

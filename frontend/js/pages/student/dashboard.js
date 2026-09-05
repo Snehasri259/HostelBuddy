@@ -41,7 +41,7 @@ const StudentDashboard = {
     ],
     roommates: [
       { name: 'Amit Singh', initials: 'AS' },
-      { name: 'Priya Patel', initials: 'PP' },
+      { name: 'Rahul Verma', initials: 'RV' },
     ],
   },
 

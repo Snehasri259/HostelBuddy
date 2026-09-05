@@ -66,6 +66,7 @@
   <script src="js/pages/admin/complaints.js"></script>
   <script src="js/pages/admin/visitors.js"></script>
   <script src="js/pages/admin/announcements.js"></script>
+  <script src="js/pages/admin/students.js"></script>
   <script src="js/pages/admin/reports.js"></script>
   
   <!-- Super Admin Pages -->
@@ -74,6 +75,7 @@
   <script src="js/pages/superadmin/admins.js"></script>
   <script src="js/pages/superadmin/users.js"></script>
   <script src="js/pages/superadmin/settings.js"></script>
+  <script src="js/pages/superadmin/reports.js"></script>
   
   <!-- App Init -->
   <script>
@@ -322,6 +324,7 @@
           'admin/applications':     function() { return AdminApplications.render(); },
           'admin/allocation':       function() { return AdminAllocation.render(); },
           'admin/rooms':            function() { return AdminRooms.render(); },
+          'admin/students':         function() { return AdminStudents.render(); },
           'admin/complaints':       function() { return AdminComplaints.render(); },
           'admin/visitors':         function() { return AdminVisitors.render(); },
           'admin/announcements':    function() { return AdminAnnouncements.render(); },
@@ -330,7 +333,7 @@
           'superadmin/hostels':     function() { return SuperAdminHostels.render(); },
           'superadmin/admins':      function() { return SuperAdminAdmins.render(); },
           'superadmin/users':       function() { return SuperAdminUsers.render(); },
-          'superadmin/reports':     function() { return Reports.render(); },
+          'superadmin/reports':     function() { return SuperAdminReports.render(); },
           'superadmin/settings':    function() { return SuperAdminSettings.render(); },
         };
 
@@ -400,6 +403,7 @@
               'admin/applications':     function() { AdminApplications.init && AdminApplications.init(); },
               'admin/allocation':       function() { AdminAllocation.init && AdminAllocation.init(); },
               'admin/rooms':            function() { AdminRooms.init && AdminRooms.init(); },
+              'admin/students':         function() { AdminStudents.init && AdminStudents.init(); },
               'admin/complaints':       function() { AdminComplaints.init && AdminComplaints.init(); },
               'admin/visitors':         function() { AdminVisitors.init && AdminVisitors.init(); },
               'admin/announcements':    function() { AdminAnnouncements.init && AdminAnnouncements.init(); },
@@ -408,7 +412,7 @@
               'superadmin/hostels':     function() { SuperAdminHostels.init && SuperAdminHostels.init(); },
               'superadmin/admins':      function() { SuperAdminAdmins.init && SuperAdminAdmins.init(); },
               'superadmin/users':       function() { SuperAdminUsers.init && SuperAdminUsers.init(); },
-              'superadmin/reports':     function() { Reports.init && Reports.init(); },
+              'superadmin/reports':     function() { SuperAdminReports.init && SuperAdminReports.init(); },
               'superadmin/settings':    function() { SuperAdminSettings.init && SuperAdminSettings.init(); }
             };
             if (initMap[pageKey]) initMap[pageKey]();
