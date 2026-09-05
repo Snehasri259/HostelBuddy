@@ -1390,15 +1390,24 @@
 }
 
 /* ====================================================================
-   22. MAIN CONTENT LAYOUT
+   22. APP LAYOUT
    ==================================================================== */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
 .main-content {
   margin-left: var(--sidebar-width, 260px);
   min-height: 100vh;
+  flex: 1;
+  min-width: 0; /* prevent flex child overflow */
   transition: margin-left var(--transition);
 }
 
-.sidebar--collapsed ~ .main-content {
+.sidebar--collapsed ~ .main-content,
+.sidebar--collapsed + * .main-content {
   margin-left: var(--sidebar-collapsed, 70px);
 }
 

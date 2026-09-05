@@ -11,7 +11,7 @@ const LoginPage = {
   },
 
   cacheElements() {
-    // Forms
+    // Forms — all optional, null-checked before use
     this.loginCard = document.getElementById('loginCard');
     this.registerCard = document.getElementById('registerCard');
     this.loginForm = document.getElementById('loginForm');
@@ -22,7 +22,7 @@ const LoginPage = {
     this.loginPassword = document.getElementById('loginPassword');
     this.rememberMe = document.getElementById('rememberMe');
     
-    // Register inputs
+    // Register inputs (may not exist on login-only page)
     this.regName = document.getElementById('regName');
     this.regEmail = document.getElementById('regEmail');
     this.regPhone = document.getElementById('regPhone');
@@ -43,51 +43,66 @@ const LoginPage = {
   },
 
   bindEvents() {
-    // Form submissions
-    this.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
-    this.registerForm.addEventListener('submit', (e) => this.handleRegister(e));
+    // Only bind login form if it exists
+    if (this.loginForm) {
+      this.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+    }
+    if (this.registerForm) {
+      this.registerForm.addEventListener('submit', (e) => this.handleRegister(e));
+    }
     
-    // Form toggle
-    this.showRegister.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.toggleForm('register');
-    });
-    this.showLogin.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.toggleForm('login');
-    });
+    // Form toggle — only if both forms exist
+    if (this.showRegister) {
+      this.showRegister.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.toggleForm('register');
+      });
+    }
+    if (this.showLogin) {
+      this.showLogin.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.toggleForm('login');
+      });
+    }
     
     // Password visibility toggle
-    this.passwordToggle.addEventListener('click', () => this.togglePassword('loginPassword'));
+    if (this.passwordToggle) {
+      this.passwordToggle.addEventListener('click', () => this.togglePassword('loginPassword'));
+    }
     document.querySelectorAll('.password-toggle[data-target]').forEach(btn => {
       btn.addEventListener('click', () => this.togglePassword(btn.dataset.target));
     });
     
-    // Password strength
-    this.regPassword.addEventListener('input', () => this.checkPasswordStrength());
+    // Password strength (only if register form exists)
+    if (this.regPassword) {
+      this.regPassword.addEventListener('input', () => this.checkPasswordStrength());
+    }
     
     // Role selection
     document.querySelectorAll('.role-option').forEach(option => {
       option.addEventListener('click', () => {
         document.querySelectorAll('.role-option').forEach(o => o.classList.remove('active'));
         option.classList.add('active');
-        option.querySelector('input').checked = true;
+        const radio = option.querySelector('input');
+        if (radio) radio.checked = true;
       });
     });
     
     // Theme toggle
-    this.themeToggle.addEventListener('click', () => {
-      if (typeof Theme !== 'undefined') {
-        Theme.toggle();
-      }
-    });
+    if (this.themeToggle) {
+      this.themeToggle.addEventListener('click', () => {
+        if (typeof Theme !== 'undefined') {
+          Theme.toggle();
+        }
+      });
+    }
     
     // Real-time validation
-    this.loginEmail.addEventListener('blur', () => this.validateLoginEmail());
-    this.loginPassword.addEventListener('blur', () => this.validateLoginPassword());
-    this.regEmail.addEventListener('blur', () => this.validateRegEmail());
-    this.regPassword.addEventListener('blur', () => this.validateRegPassword());
-    this.regConfirmPassword.addEventListener('blur', () => this.validateConfirmPassword());
+    if (this.loginEmail) this.loginEmail.addEventListener('blur', () => this.validateLoginEmail());
+    if (this.loginPassword) this.loginPassword.addEventListener('blur', () => this.validateLoginPassword());
+    if (this.regEmail) this.regEmail.addEventListener('blur', () => this.validateRegEmail());
+    if (this.regPassword) this.regPassword.addEventListener('blur', () => this.validateRegPassword());
+    if (this.regConfirmPassword) this.regConfirmPassword.addEventListener('blur', () => this.validateConfirmPassword());
     
     // Clear errors on input
     document.querySelectorAll('.input-group input').forEach(input => {

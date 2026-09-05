@@ -72,348 +72,350 @@
   
   <!-- App Init -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const app = document.getElementById('app');
-      const hash = window.location.hash.slice(1) || 'login';
-      // Helper: read user from localStorage OR sessionStorage
+    /* ============================================
+       HostelBuddy SPA Router
+       Single hashchange listener, no duplicates.
+       ============================================ */
+    (function() {
+      'use strict';
+
+      let currentHash = ''; // track to avoid duplicate renders
+
       function getUser() {
-        return JSON.parse(localStorage.getItem('hb_user') || 'null');
-      }
-      const user = getUser();
-      
-      // Route based on hash
-      if (!hash || hash === 'login') {
-        if (user && user.token) {
-          window.location.hash = `#${user.role}/dashboard`;
-          return;
+        try {
+          return JSON.parse(localStorage.getItem('hb_user') || 'null');
+        } catch (e) {
+          return null;
         }
-        renderLoginPage(app);
-      } else if (user && user.token) {
-        const [role, page] = hash.includes('/') ? hash.split('/') : [hash, 'dashboard'];
-        renderDashboard(app, role, page);
-      } else {
-        window.location.hash = '#login';
-        renderLoginPage(app);
       }
-      
-      // Handle hash changes
-      window.addEventListener('hashchange', () => {
-        const newHash = window.location.hash.slice(1) || 'login';
-        const currentUser = getUser();
-        
-        if (!newHash || newHash === 'login') {
-          if (currentUser && currentUser.token) {
-            window.location.hash = `#${currentUser.role}/dashboard`;
+
+      function navigate(hash) {
+        window.location.hash = hash;
+      }
+
+      /* ---- Initial route ---- */
+      document.addEventListener('DOMContentLoaded', function() {
+        var app = document.getElementById('app');
+        route(app);
+      });
+
+      /* ---- Single hashchange listener ---- */
+      window.addEventListener('hashchange', function() {
+        var app = document.getElementById('app');
+        route(app);
+      });
+
+      /* ---- Route handler ---- */
+      function route(app) {
+        var hash = window.location.hash.slice(1) || 'login';
+        var user = getUser();
+
+        /* Already rendered this hash? skip. */
+        if (hash === currentHash) return;
+        currentHash = hash;
+
+        if (!hash || hash === 'login') {
+          if (user && user.token) {
+            currentHash = ''; // will re-render on next hash
+            navigate('#' + user.role + '/dashboard');
             return;
           }
           renderLoginPage(app);
-        } else if (currentUser && currentUser.token) {
-          const [role, page] = newHash.includes('/') ? newHash.split('/') : [newHash, 'dashboard'];
+        } else if (user && user.token) {
+          var parts = hash.split('/');
+          var role = parts[0] || 'student';
+          var page = parts[1] || 'dashboard';
           renderDashboard(app, role, page);
         } else {
-          window.location.hash = '#login';
+          currentHash = '';
+          navigate('#login');
         }
-      });
-    });
-    
-    // ============================================
-    // LOGIN PAGE RENDERER
-    // ============================================
-    function renderLoginPage(container) {
-      container.innerHTML = `
-        <!-- Theme Toggle -->
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
+      }
 
-        <div class="login-container">
-          <div class="login-left fade-in">
-            <div class="login-left-content">
-              <div class="illustration">
-                <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="120" y="80" width="160" height="180" rx="4" fill="rgba(255,255,255,0.15)"/>
-                  <rect x="130" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="170" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="210" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="130" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="170" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="210" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="130" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="170" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="210" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
-                  <rect x="180" y="220" width="40" height="40" rx="2" fill="rgba(255,255,255,0.4)"/>
-                  <rect x="40" y="140" width="70" height="120" rx="4" fill="rgba(255,255,255,0.1)"/>
-                  <rect x="290" y="120" width="80" height="140" rx="4" fill="rgba(255,255,255,0.1)"/>
-                </svg>
-              </div>
-              <div class="login-brand">
-                <div class="brand-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      /* ============================================
+         LOGIN PAGE RENDERER
+         ============================================ */
+      function renderLoginPage(container) {
+        container.innerHTML = '
+          <!-- Theme Toggle -->
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+
+          <div class="login-container">
+            <div class="login-left fade-in">
+              <div class="login-left-content">
+                <div class="illustration">
+                  <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="120" y="80" width="160" height="180" rx="4" fill="rgba(255,255,255,0.15)"/>
+                    <rect x="130" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="170" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="210" y="90" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="130" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="170" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="210" y="130" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="130" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="170" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="210" y="170" width="30" height="30" rx="2" fill="rgba(255,255,255,0.3)"/>
+                    <rect x="180" y="220" width="40" height="40" rx="2" fill="rgba(255,255,255,0.4)"/>
+                    <rect x="40" y="140" width="70" height="120" rx="4" fill="rgba(255,255,255,0.1)"/>
+                    <rect x="290" y="120" width="80" height="140" rx="4" fill="rgba(255,255,255,0.1)"/>
                   </svg>
                 </div>
-                <h1 class="brand-name">HostelBuddy</h1>
-                <p class="brand-tagline">Your Hostel, Simplified</p>
-              </div>
-              <div class="login-features">
-                <div class="feature-item fade-in stagger-1">
-                  <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
-                  <span class="feature-text">Smart Room Allocation</span>
+                <div class="login-brand">
+                  <div class="brand-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                  </div>
+                  <h1 class="brand-name">HostelBuddy</h1>
+                  <p class="brand-tagline">Your Hostel, Simplified</p>
                 </div>
-                <div class="feature-item fade-in stagger-2">
-                  <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
-                  <span class="feature-text">Easy Applications</span>
-                </div>
-                <div class="feature-item fade-in stagger-3">
-                  <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-                  <span class="feature-text">Quick Complaints</span>
+                <div class="login-features">
+                  <div class="feature-item fade-in stagger-1">
+                    <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                    <span class="feature-text">Smart Room Allocation</span>
+                  </div>
+                  <div class="feature-item fade-in stagger-2">
+                    <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+                    <span class="feature-text">Easy Applications</span>
+                  </div>
+                  <div class="feature-item fade-in stagger-3">
+                    <span class="feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                    <span class="feature-text">Quick Complaints</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="login-right fade-in stagger-2">
-            <div class="login-form-container">
-              <div class="login-card glass-panel" id="loginCard">
-                <div class="login-header">
-                  <h2 class="login-title">Welcome Back</h2>
-                  <p class="login-subtitle">Sign in to your account</p>
-                </div>
-                
-                <form id="loginForm" class="login-form" novalidate>
-                  <div class="input-group">
-                    <input type="email" id="loginEmail" name="email" placeholder=" " required>
-                    <label for="loginEmail">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                      </svg>
-                      Email Address
-                    </label>
-                    <span class="input-error" id="emailError"></span>
+            <div class="login-right fade-in stagger-2">
+              <div class="login-form-container">
+                <div class="login-card glass-panel" id="loginCard">
+                  <div class="login-header">
+                    <h2 class="login-title">Welcome Back</h2>
+                    <p class="login-subtitle">Sign in to your account</p>
                   </div>
                   
-                  <div class="input-group">
-                    <input type="password" id="loginPassword" name="password" placeholder=" " required>
-                    <label for="loginPassword">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                      </svg>
-                      Password
-                    </label>
-                    <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
-                      <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                      </svg>
-                      <svg class="eye-off-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                      </svg>
+                  <form id="loginForm" class="login-form" novalidate>
+                    <div class="input-group">
+                      <input type="email" id="loginEmail" name="email" placeholder=" " required>
+                      <label for="loginEmail">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                          <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        Email Address
+                      </label>
+                      <span class="input-error" id="emailError"></span>
+                    </div>
+                    
+                    <div class="input-group">
+                      <input type="password" id="loginPassword" name="password" placeholder=" " required>
+                      <label for="loginPassword">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Password
+                      </label>
+                      <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
+                        <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg class="eye-off-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                          <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                      </button>
+                      <span class="input-error" id="passwordError"></span>
+                    </div>
+                    
+                    <div class="login-options">
+                      <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMe" name="remember">
+                        <span class="custom-checkbox"></span>
+                        <span>Remember me</span>
+                      </label>
+                      <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" class="login-btn magnetic-btn ripple-btn btn-lg" id="loginBtn">
+                      <span class="btn-text">Login</span>
+                      <span class="btn-loader" style="display:none">
+                        <svg class="spinner" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10" stroke-dasharray="31.42" stroke-dashoffset="10"></circle>
+                        </svg>
+                      </span>
                     </button>
-                    <span class="input-error" id="passwordError"></span>
+                  </form>
+                  
+                  <div class="login-divider">
+                    <span>or</span>
                   </div>
                   
-                  <div class="login-options">
-                    <label class="checkbox-label">
-                      <input type="checkbox" id="rememberMe" name="remember">
-                      <span class="custom-checkbox"></span>
-                      <span>Remember me</span>
-                    </label>
-                    <a href="#" class="forgot-password">Forgot password?</a>
+                  <div class="login-footer">
+                    <p>Don\'t have an account? <a href="#" id="showRegister" class="link-primary">Create Account</a></p>
                   </div>
-                  
-                  <button type="submit" class="login-btn magnetic-btn ripple-btn btn-lg" id="loginBtn">
-                    <span class="btn-text">Login</span>
-                    <span class="btn-loader" style="display:none">
-                      <svg class="spinner" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10" stroke-dasharray="31.42" stroke-dashoffset="10"></circle>
-                      </svg>
-                    </span>
-                  </button>
-                </form>
-                
-                <div class="login-divider">
-                  <span>or</span>
                 </div>
                 
-                <div class="login-footer">
-                  <p>Don't have an account? <a href="#" id="showRegister" class="link-primary">Create Account</a></p>
+                <div class="login-version">
+                  <p>HostelBuddy v1.0</p>
                 </div>
-              </div>
-              
-              <div class="login-version">
-                <p>HostelBuddy v1.0</p>
               </div>
             </div>
           </div>
-        </div>
-      `;
-      
-      // Initialize login page
-      if (typeof LoginPage !== 'undefined') {
-        LoginPage.init();
+        ';
+        
+        /* Initialize login page — wrapped so errors don't break anything */
+        try {
+          if (typeof LoginPage !== 'undefined' && LoginPage.init) {
+            LoginPage.init();
+          }
+        } catch (e) {
+          console.error('[HostelBuddy] LoginPage.init error:', e);
+        }
       }
-    }
-    
-    // ============================================
-    // DASHBOARD LAYOUT RENDERER
-    // ============================================
-    function renderDashboard(container, role, page) {
-      try {
-        const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
-        
-        // Build page content
-        let pageContent = '';
-        const pageKey = `${role}/${page}`;
-        
-        // Get page renderer from registry
-        const pageRenderers = {
-          // Student pages
-          'student/dashboard': () => StudentDashboard.render(),
-          'student/application': () => StudentApplication.render(),
-          'student/myhostel': () => StudentMyHostel.render(),
-          'student/complaints': () => StudentComplaints.render(),
-          'student/visitors': () => StudentVisitors.render(),
-          'student/announcements': () => StudentAnnouncements.render(),
-          'student/profile': () => StudentProfile.render(),
-          // Admin pages
-          'admin/dashboard': () => AdminDashboard.render(),
-          'admin/applications': () => AdminApplications.render(),
-          'admin/allocation': () => AdminAllocation.render(),
-          'admin/rooms': () => AdminRooms.render(),
-          'admin/complaints': () => AdminComplaints.render(),
-          'admin/visitors': () => AdminVisitors.render(),
-          'admin/announcements': () => AdminAnnouncements.render(),
-          'admin/reports': () => Reports.render(),
-          // Super Admin pages
-          'superadmin/dashboard': () => SuperAdminDashboard.render(),
-          'superadmin/hostels': () => SuperAdminHostels.render(),
-          'superadmin/admins': () => SuperAdminAdmins.render(),
-          'superadmin/users': () => SuperAdminUsers.render(),
-          'superadmin/reports': () => Reports.render(),
-          'superadmin/settings': () => SuperAdminSettings.render(),
+
+      /* ============================================
+         DASHBOARD LAYOUT RENDERER
+         Fully fault-tolerant: each component is isolated
+         ============================================ */
+      function renderDashboard(container, role, page) {
+        var user = {};
+        try { user = JSON.parse(localStorage.getItem('hb_user') || '{}'); } catch(e) {}
+
+        var pageKey = role + '/' + page;
+        var pageContent = '';
+        var sidebarHTML = '';
+        var navbarHTML = '';
+
+        /* --- Page content --- */
+        var pageRenderers = {
+          'student/dashboard':      function() { return StudentDashboard.render(); },
+          'student/application':    function() { return StudentApplication.render(); },
+          'student/myhostel':       function() { return StudentMyHostel.render(); },
+          'student/complaints':     function() { return StudentComplaints.render(); },
+          'student/visitors':       function() { return StudentVisitors.render(); },
+          'student/announcements':  function() { return StudentAnnouncements.render(); },
+          'student/profile':        function() { return StudentProfile.render(); },
+          'admin/dashboard':        function() { return AdminDashboard.render(); },
+          'admin/applications':     function() { return AdminApplications.render(); },
+          'admin/allocation':       function() { return AdminAllocation.render(); },
+          'admin/rooms':            function() { return AdminRooms.render(); },
+          'admin/complaints':       function() { return AdminComplaints.render(); },
+          'admin/visitors':         function() { return AdminVisitors.render(); },
+          'admin/announcements':    function() { return AdminAnnouncements.render(); },
+          'admin/reports':          function() { return Reports.render(); },
+          'superadmin/dashboard':   function() { return SuperAdminDashboard.render(); },
+          'superadmin/hostels':     function() { return SuperAdminHostels.render(); },
+          'superadmin/admins':      function() { return SuperAdminAdmins.render(); },
+          'superadmin/users':       function() { return SuperAdminUsers.render(); },
+          'superadmin/reports':     function() { return Reports.render(); },
+          'superadmin/settings':    function() { return SuperAdminSettings.render(); },
         };
-        
-        const renderer = pageRenderers[pageKey];
+
+        var renderer = pageRenderers[pageKey];
         if (renderer) {
           try {
             pageContent = renderer();
           } catch (e) {
             console.error('[HostelBuddy] Page render error:', pageKey, e);
-            pageContent = '<div style="padding:40px;text-align:center"><h2>Page Error</h2><p style="color:#78716C">Failed to render ' + pageKey + '</p><pre style="text-align:left;background:#f5f0e6;padding:16px;border-radius:8px;margin-top:16px;overflow:auto;font-size:13px">' + e.message + '</pre></div>';
+            pageContent = '<div style="padding:40px;text-align:center"><h2>Page Error</h2><p style="color:#78716C">Failed to render ' + pageKey + '</p><pre style="text-align:left;background:#f5f0e6;padding:16px;border-radius:8px;margin-top:16px;overflow:auto;font-size:13px;max-width:600px">' + e.stack + '</pre></div>';
           }
         } else {
           pageContent = '<div style="padding:40px;text-align:center"><h2>Page not found</h2><p style="color:#78716C">The page "' + pageKey + '" does not exist.</p></div>';
         }
-        
-        // Page titles
-        const pageTitles = {
-          'dashboard': 'Dashboard',
-          'application': 'Hostel Application',
-          'myhostel': 'My Hostel',
-          'complaints': 'Complaints',
-          'visitors': 'Visitors',
-          'announcements': 'Announcements',
-          'profile': 'Profile',
-          'applications': 'Applications',
-          'allocation': 'Room Allocation',
-          'rooms': 'Rooms',
-          'reports': 'Reports',
-          'hostels': 'Hostels',
-          'admins': 'Admins',
-          'users': 'Users',
-          'settings': 'Settings',
+
+        /* --- Page titles --- */
+        var pageTitles = {
+          'dashboard': 'Dashboard', 'application': 'Hostel Application', 'myhostel': 'My Hostel',
+          'complaints': 'Complaints', 'visitors': 'Visitors', 'announcements': 'Announcements',
+          'profile': 'Profile', 'applications': 'Applications', 'allocation': 'Room Allocation',
+          'rooms': 'Rooms', 'reports': 'Reports', 'hostels': 'Hostels', 'admins': 'Admins',
+          'users': 'Users', 'settings': 'Settings'
         };
-        
-        const pageTitle = pageTitles[page] || 'Dashboard';
-        
-        // Render sidebar
-        let sidebarHTML = '';
+        var pageTitle = pageTitles[page] || 'Dashboard';
+
+        /* --- Sidebar --- */
         try {
           sidebarHTML = Sidebar.render(role, page);
         } catch (e) {
           console.error('[HostelBuddy] Sidebar render error:', e);
+          sidebarHTML = '';
         }
-        
-        // Render navbar
-        let navbarHTML = '';
+
+        /* --- Navbar --- */
         try {
           navbarHTML = Navbar.render(pageTitle, user);
         } catch (e) {
           console.error('[HostelBuddy] Navbar render error:', e);
+          navbarHTML = '';
         }
-        
-        // Render full layout
-        container.innerHTML = `
-          <div class="app-layout">
-            ${sidebarHTML}
-            <div class="main-content">
-              ${navbarHTML}
-              <div class="page-content" id="pageContent">
-                ${pageContent}
-              </div>
-            </div>
-          </div>
-        `;
-        
-        // Initialize page-specific JS
-        setTimeout(() => {
+
+        /* --- Assemble layout --- */
+        container.innerHTML = '<div class="app-layout">' +
+          sidebarHTML +
+          '<div class="main-content">' +
+            navbarHTML +
+            '<div class="page-content" id="pageContent">' +
+              pageContent +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+        console.log('[HostelBuddy] Rendered:', pageKey);
+
+        /* --- Post-render init (delayed so DOM is ready) --- */
+        setTimeout(function() {
           try {
-            const initFunctions = {
-              'student/dashboard': () => StudentDashboard.init?.(),
-              'student/application': () => StudentApplication.init?.(),
-              'student/myhostel': () => StudentMyHostel.init?.(),
-              'student/complaints': () => StudentComplaints.init?.(),
-              'student/visitors': () => StudentVisitors.init?.(),
-              'student/announcements': () => StudentAnnouncements.init?.(),
-              'student/profile': () => StudentProfile.init?.(),
-              'admin/dashboard': () => AdminDashboard.init?.(),
-              'admin/applications': () => AdminApplications.init?.(),
-              'admin/allocation': () => AdminAllocation.init?.(),
-              'admin/rooms': () => AdminRooms.init?.(),
-              'admin/complaints': () => AdminComplaints.init?.(),
-              'admin/visitors': () => AdminVisitors.init?.(),
-              'admin/announcements': () => AdminAnnouncements.init?.(),
-              'admin/reports': () => Reports.init?.(),
-              'superadmin/dashboard': () => SuperAdminDashboard.init?.(),
-              'superadmin/hostels': () => SuperAdminHostels.init?.(),
-              'superadmin/admins': () => SuperAdminAdmins.init?.(),
-              'superadmin/users': () => SuperAdminUsers.init?.(),
-              'superadmin/reports': () => Reports.init?.(),
-              'superadmin/settings': () => SuperAdminSettings.init?.(),
+            var initMap = {
+              'student/dashboard':      function() { StudentDashboard.init && StudentDashboard.init(); },
+              'student/application':    function() { StudentApplication.init && StudentApplication.init(); },
+              'student/myhostel':       function() { StudentMyHostel.init && StudentMyHostel.init(); },
+              'student/complaints':     function() { StudentComplaints.init && StudentComplaints.init(); },
+              'student/visitors':       function() { StudentVisitors.init && StudentVisitors.init(); },
+              'student/announcements':  function() { StudentAnnouncements.init && StudentAnnouncements.init(); },
+              'student/profile':        function() { StudentProfile.init && StudentProfile.init(); },
+              'admin/dashboard':        function() { AdminDashboard.init && AdminDashboard.init(); },
+              'admin/applications':     function() { AdminApplications.init && AdminApplications.init(); },
+              'admin/allocation':       function() { AdminAllocation.init && AdminAllocation.init(); },
+              'admin/rooms':            function() { AdminRooms.init && AdminRooms.init(); },
+              'admin/complaints':       function() { AdminComplaints.init && AdminComplaints.init(); },
+              'admin/visitors':         function() { AdminVisitors.init && AdminVisitors.init(); },
+              'admin/announcements':    function() { AdminAnnouncements.init && AdminAnnouncements.init(); },
+              'admin/reports':          function() { Reports.init && Reports.init(); },
+              'superadmin/dashboard':   function() { SuperAdminDashboard.init && SuperAdminDashboard.init(); },
+              'superadmin/hostels':     function() { SuperAdminHostels.init && SuperAdminHostels.init(); },
+              'superadmin/admins':      function() { SuperAdminAdmins.init && SuperAdminAdmins.init(); },
+              'superadmin/users':       function() { SuperAdminUsers.init && SuperAdminUsers.init(); },
+              'superadmin/reports':     function() { Reports.init && Reports.init(); },
+              'superadmin/settings':    function() { SuperAdminSettings.init && SuperAdminSettings.init(); }
             };
-            
-            if (initFunctions[pageKey]) {
-              initFunctions[pageKey]();
-            }
-            
-            Sidebar.init?.();
-            Navbar.init?.();
+            if (initMap[pageKey]) initMap[pageKey]();
           } catch (e) {
             console.error('[HostelBuddy] Init error:', e);
           }
+          try { Sidebar.init && Sidebar.init(); } catch(e) { console.error(e); }
+          try { Navbar.init && Navbar.init(); } catch(e) { console.error(e); }
         }, 100);
-      } catch (e) {
-        console.error('[HostelBuddy] renderDashboard fatal error:', e);
-        container.innerHTML = '<div style="padding:60px;text-align:center;font-family:DM Sans,sans-serif"><h1 style="color:#D97706">Something went wrong</h1><p style="color:#78716C;margin:16px 0">The dashboard could not load. Please try refreshing.</p><pre style="text-align:left;background:#f5f0e6;padding:16px;border-radius:8px;max-width:600px;margin:16px auto;overflow:auto;font-size:13px">' + e.message + '</pre><a href="#login" style="display:inline-block;margin-top:16px;padding:10px 24px;background:#D97706;color:#fff;border-radius:999px;text-decoration:none;font-weight:600">Back to Login</a></div>';
       }
-    }
+
+    })();
   </script>
 </body>
 </html>
