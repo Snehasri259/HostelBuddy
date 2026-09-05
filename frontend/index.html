@@ -141,7 +141,7 @@
          LOGIN PAGE RENDERER
          ============================================ */
       function renderLoginPage(container) {
-        container.innerHTML = '
+        container.innerHTML = `
           <!-- Theme Toggle -->
           <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
             <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -274,7 +274,7 @@
                   </div>
                   
                   <div class="login-footer">
-                    <p>Don\'t have an account? <a href="#" id="showRegister" class="link-primary">Create Account</a></p>
+                    <p>Do not have an account? <a href="#" id="showRegister" class="link-primary">Create Account</a></p>
                   </div>
                 </div>
                 
@@ -284,7 +284,7 @@
               </div>
             </div>
           </div>
-        ';
+        `;
         
         /* Initialize login page — wrapped so errors don't break anything */
         try {
