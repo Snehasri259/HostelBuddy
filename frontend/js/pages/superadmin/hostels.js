@@ -1,17 +1,16 @@
 /**
  * HostelBuddy Super Admin Hostel Management Page
- * View, add, edit hostels
+ * View, add, edit hostels — all data from Store
  */
 
 const SuperAdminHostels = {
-  hostels: [
-    { id: 1, name: 'Boys Hostel A', type: 'boys', capacity: 200, occupied: 180, admin: 'Dr. Sharma', address: 'Block A, Main Campus' },
-    { id: 2, name: 'Boys Hostel B', type: 'boys', capacity: 150, occupied: 112, admin: 'Mr. Verma', address: 'Block B, Main Campus' },
-    { id: 3, name: 'Girls Hostel A', type: 'girls', capacity: 180, occupied: 153, admin: 'Mrs. Gupta', address: 'Block C, Main Campus' },
-    { id: 4, name: 'Girls Hostel B', type: 'girls', capacity: 120, occupied: 72, admin: 'Ms. Joshi', address: 'Block D, Main Campus' },
-  ],
 
   render() {
+    const hostels = Store.getAll('hostels');
+    const beds = Store.getAll('beds');
+    const rooms = Store.getAll('rooms');
+    const admins = Store.getAll('admins');
+
     return `
       <div class="section-header" style="margin-bottom:24px;flex-wrap:wrap;gap:16px">
         <h2 class="section-title" style="font-size:1.5rem;display:flex;align-items:center;gap:8px">
@@ -25,15 +24,22 @@ const SuperAdminHostels = {
       </div>
       
       <div class="hostel-cards-grid">
-        ${this.hostels.map((h, i) => this.renderCard(h, i)).join('')}
+        ${hostels.map((h, i) => {
+          const hRooms = rooms.filter(r => r.hostelId === h.id);
+          const hBeds = beds.filter(b => hRooms.some(r => r.id === b.roomId));
+          const occupied = hBeds.filter(b => b.status === 'occupied').length;
+          const capacity = hBeds.length;
+          const adminObj = admins.find(a => a.id === h.admin);
+          return this.renderCard(h, occupied, capacity, adminObj ? adminObj.name : 'Not assigned', i);
+        }).join('')}
       </div>
       
       ${this.renderModal()}
     `;
   },
 
-  renderCard(hostel, index) {
-    const occupancy = Math.round((hostel.occupied / hostel.capacity) * 100);
+  renderCard(hostel, occupied, capacity, adminName, index) {
+    const occupancy = capacity ? Math.round((occupied / capacity) * 100) : 0;
     const statusClass = occupancy >= 90 ? 'danger' : occupancy >= 70 ? 'warning' : 'success';
 
     return `
@@ -51,26 +57,23 @@ const SuperAdminHostels = {
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
             <div style="text-align:center;padding:12px;background:var(--bg-secondary);border-radius:var(--radius-md)">
               <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase">Capacity</div>
-              <div style="font-size:1.125rem;font-weight:700;font-family:'JetBrains Mono',monospace">${hostel.capacity}</div>
+              <div style="font-size:1.125rem;font-weight:700;font-family:'JetBrains Mono',monospace">${capacity}</div>
             </div>
             <div style="text-align:center;padding:12px;background:var(--bg-secondary);border-radius:var(--radius-md)">
               <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase">Occupied</div>
-              <div style="font-size:1.125rem;font-weight:700;font-family:'JetBrains Mono',monospace">${hostel.occupied}</div>
+              <div style="font-size:1.125rem;font-weight:700;font-family:'JetBrains Mono',monospace">${occupied}</div>
             </div>
           </div>
           <div class="progress" style="margin-bottom:12px">
             <div class="progress-fill progress-fill--${statusClass}" style="width:${occupancy}%"></div>
           </div>
           <div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px">
-            <strong>Admin:</strong> ${Utils.sanitize(hostel.admin)}
+            <strong>Admin:</strong> ${Utils.sanitize(adminName)}
           </div>
-          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">${Utils.sanitize(hostel.address)}</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">${Utils.sanitize(hostel.address || '')}</div>
           <div style="display:flex;gap:8px">
-            <button class="quick-action-btn quick-action-btn--secondary btn-sm" onclick="SuperAdminHostels.edit(${hostel.id})">
+            <button class="quick-action-btn quick-action-btn--secondary btn-sm" onclick="SuperAdminHostels.edit('${hostel.id}')">
               ${icons.edit || ''} Edit
-            </button>
-            <button class="quick-action-btn quick-action-btn--secondary btn-sm" onclick="window.location.hash='#admin/rooms'">
-              ${icons.building || ''} View Rooms
             </button>
           </div>
         </div>
@@ -79,6 +82,7 @@ const SuperAdminHostels = {
   },
 
   renderModal() {
+    const hostels = Store.getAll('hostels');
     return `
       <div class="modal-overlay hidden" id="hostelModal">
         <div class="modal" style="max-width:500px">
@@ -102,13 +106,9 @@ const SuperAdminHostels = {
                   </select>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Capacity</label>
-                  <input type="number" class="form-input" id="hostelCapacity" min="10" max="500" required>
+                  <label class="form-label">Address</label>
+                  <input type="text" class="form-input" id="hostelAddress" required>
                 </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Address</label>
-                <input type="text" class="form-input" id="hostelAddress" required>
               </div>
               <div class="modal-footer" style="padding:16px 0 0;border-top:1px solid var(--border)">
                 <button type="button" class="btn-secondary" onclick="SuperAdminHostels.closeModal()">Cancel</button>
@@ -131,14 +131,13 @@ const SuperAdminHostels = {
   },
 
   edit(id) {
-    const hostel = this.hostels.find(h => h.id === id);
+    const hostel = Store.getById('hostels', id);
     if (!hostel) return;
     document.getElementById('hostelModalTitle').textContent = 'Edit Hostel';
     document.getElementById('editHostelId').value = id;
     document.getElementById('hostelName').value = hostel.name;
     document.getElementById('hostelType').value = hostel.type;
-    document.getElementById('hostelCapacity').value = hostel.capacity;
-    document.getElementById('hostelAddress').value = hostel.address;
+    document.getElementById('hostelAddress').value = hostel.address || '';
     document.getElementById('hostelModal').classList.remove('hidden');
   },
 
@@ -148,15 +147,13 @@ const SuperAdminHostels = {
     const data = {
       name: document.getElementById('hostelName').value,
       type: document.getElementById('hostelType').value,
-      capacity: parseInt(document.getElementById('hostelCapacity').value),
       address: document.getElementById('hostelAddress').value,
     };
 
     if (editId) {
-      const hostel = this.hostels.find(h => h.id === parseInt(editId));
-      if (hostel) Object.assign(hostel, data);
+      Store.update('hostels', editId, data);
     } else {
-      this.hostels.push({ id: Date.now(), ...data, occupied: 0, admin: 'Not assigned' });
+      Store.add('hostels', { ...data, capacity: 24, admin: null, status: 'active' });
     }
 
     this.closeModal();
@@ -173,7 +170,9 @@ const SuperAdminHostels = {
     if (content) { content.innerHTML = this.render(); this.init(); }
   },
 
-  init() { console.log('[HostelBuddy] Super Admin Hostels initialized'); },
+  init() {
+    console.log('[HostelBuddy] Super Admin Hostels initialized');
+  },
 };
 
 window.SuperAdminHostels = SuperAdminHostels;

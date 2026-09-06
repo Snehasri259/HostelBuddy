@@ -22,9 +22,19 @@ const AdminDashboard = {
       newAnnouncements: s.publishedAnnouncements,
     };
     const students = Store.getAll('students');
+    const beds = Store.getAll('beds');
+    const rooms = Store.getAll('rooms');
+    const hostels = Store.getAll('hostels');
     this.data.recentApplications = Store.getAll('applications').slice(0, 5).map(app => {
       const student = students.find(s => s.id === app.studentId);
       return { id: app.id, name: student ? student.name : 'Unknown', email: student ? student.email : '', date: new Date(app.date), hostel: app.hostel === 'boys' ? 'Boys Hostel' : 'Girls Hostel', status: app.status };
+    });
+    // Compute block occupancy from Store data
+    this.data.blockOccupancy = hostels.map(h => {
+      const hRooms = rooms.filter(r => r.hostelId === h.id);
+      const hBeds = beds.filter(b => hRooms.some(r => r.id === b.roomId));
+      const occupied = hBeds.filter(b => b.status === 'occupied').length;
+      return { name: h.name, occupied, total: hBeds.length };
     });
   },
 

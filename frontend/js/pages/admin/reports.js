@@ -48,13 +48,42 @@ const Reports = {
     }
   },
 
-  renderOccupancyReport() {
-    const data = [
+  _getStoreOccupancyData() {
+    if (typeof Store === 'undefined') return [
       { name: 'Boys A', capacity: 200, occupied: 180 },
       { name: 'Boys B', capacity: 150, occupied: 112 },
       { name: 'Girls A', capacity: 180, occupied: 153 },
       { name: 'Girls B', capacity: 120, occupied: 72 },
     ];
+    const hostels = Store.getAll('hostels');
+    const rooms = Store.getAll('rooms');
+    const beds = Store.getAll('beds');
+    return hostels.map(h => {
+      const hRooms = rooms.filter(r => r.hostelId === h.id);
+      const hBeds = beds.filter(b => hRooms.some(r => r.id === b.roomId));
+      const occupied = hBeds.filter(b => b.status === 'occupied').length;
+      return { name: h.name, capacity: hBeds.length, occupied };
+    });
+  },
+
+  _getStoreStats() {
+    if (typeof Store === 'undefined') return { approved: 142, pending: 23, rejected: 15, openComplaints: 18, inProgress: 12, resolved: 53, totalVisitors: 425 };
+    const stats = Store.getStats();
+    const apps = Store.getAll('applications');
+    const complaints = Store.getAll('complaints');
+    return {
+      approved: apps.filter(a => a.status === 'approved' || a.status === 'allocated').length,
+      pending: apps.filter(a => a.status === 'pending').length,
+      rejected: apps.filter(a => a.status === 'rejected').length,
+      openComplaints: complaints.filter(c => c.status === 'open').length,
+      inProgress: complaints.filter(c => c.status === 'in_progress').length,
+      resolved: complaints.filter(c => c.status === 'resolved').length,
+      totalVisitors: stats.totalVisitors,
+    };
+  },
+
+  renderOccupancyReport() {
+    const data = this._getStoreOccupancyData();
 
     return `
       <div class="report-header">
@@ -106,6 +135,7 @@ const Reports = {
   },
 
   renderApplicationsReport() {
+    const stats = this._getStoreStats();
     return `
       <div class="report-header">
         <h3 class="report-title">Applications Report</h3>
@@ -122,14 +152,15 @@ const Reports = {
         </div>
       </div>
       <div class="stats-row" style="grid-template-columns:repeat(3,1fr);gap:16px">
-        <div class="stat-mini stat-mini--success"><div class="stat-mini-label">Approved</div><div class="stat-mini-value">142</div></div>
-        <div class="stat-mini stat-mini--warning"><div class="stat-mini-label">Pending</div><div class="stat-mini-value">23</div></div>
-        <div class="stat-mini"><div class="stat-mini-label">Rejected</div><div class="stat-mini-value" style="color:var(--danger)">15</div></div>
+        <div class="stat-mini stat-mini--success"><div class="stat-mini-label">Approved</div><div class="stat-mini-value">${stats.approved}</div></div>
+        <div class="stat-mini stat-mini--warning"><div class="stat-mini-label">Pending</div><div class="stat-mini-value">${stats.pending}</div></div>
+        <div class="stat-mini"><div class="stat-mini-label">Rejected</div><div class="stat-mini-value" style="color:var(--danger)">${stats.rejected}</div></div>
       </div>
     `;
   },
 
   renderComplaintsReport() {
+    const stats = this._getStoreStats();
     return `
       <div class="report-header">
         <h3 class="report-title">Complaints Report</h3>
@@ -145,14 +176,16 @@ const Reports = {
         </div>
       </div>
       <div class="stats-row" style="grid-template-columns:repeat(3,1fr);gap:16px">
-        <div class="stat-mini stat-mini--warning"><div class="stat-mini-label">Open</div><div class="stat-mini-value">18</div></div>
-        <div class="stat-mini"><div class="stat-mini-label">In Progress</div><div class="stat-mini-value" style="color:var(--info)">12</div></div>
-        <div class="stat-mini stat-mini--success"><div class="stat-mini-label">Resolved</div><div class="stat-mini-value">53</div></div>
+        <div class="stat-mini stat-mini--warning"><div class="stat-mini-label">Open</div><div class="stat-mini-value">${stats.openComplaints}</div></div>
+        <div class="stat-mini"><div class="stat-mini-label">In Progress</div><div class="stat-mini-value" style="color:var(--info)">${stats.inProgress}</div></div>
+        <div class="stat-mini stat-mini--success"><div class="stat-mini-label">Resolved</div><div class="stat-mini-value">${stats.resolved}</div></div>
       </div>
     `;
   },
 
   renderVisitorsReport() {
+    const stats = this._getStoreStats();
+    const totalVisitors = stats.totalVisitors;
     return `
       <div class="report-header">
         <h3 class="report-title">Visitors Report</h3>
@@ -171,7 +204,7 @@ const Reports = {
       <div class="stats-row" style="grid-template-columns:repeat(3,1fr);gap:16px">
         <div class="stat-mini stat-mini--success"><div class="stat-mini-label">Today</div><div class="stat-mini-value">7</div></div>
         <div class="stat-mini"><div class="stat-mini-label">This Week</div><div class="stat-mini-value">108</div></div>
-        <div class="stat-mini"><div class="stat-mini-label">This Month</div><div class="stat-mini-value">425</div></div>
+        <div class="stat-mini"><div class="stat-mini-label">Total</div><div class="stat-mini-value">${totalVisitors}</div></div>
       </div>
     `;
   },

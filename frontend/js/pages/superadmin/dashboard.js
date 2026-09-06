@@ -50,7 +50,7 @@ const SuperAdminDashboard = {
       <div class="bento-grid--row2" style="margin-bottom:24px">
         <div class="bento-card fade-in stagger-5">
           <div class="bento-icon bento-icon--success" style="width:40px;height:40px;margin-bottom:12px">
-            ${icons['check-circle'] || ''}
+            ${icons.check || ''}
           </div>
           <div class="bento-label">System Health</div>
           <div class="bento-value">${stats.systemHealth}%</div>

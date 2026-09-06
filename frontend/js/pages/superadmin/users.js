@@ -1,21 +1,11 @@
 /**
  * HostelBuddy Super Admin User Management Page
- * View, filter, and manage all users
+ * View, filter, and manage all users — data from Store
  */
 
 const SuperAdminUsers = {
   currentFilter: 'all',
   searchQuery: '',
-  users: [
-    { id: 1, name: 'Ravi Kumar', email: 'ravi@uni.edu', role: 'student', status: 'active', joined: '2024-08-15' },
-    { id: 2, name: 'Priya Singh', email: 'priya@uni.edu', role: 'student', status: 'active', joined: '2024-08-16' },
-    { id: 3, name: 'Amit Patel', email: 'amit@uni.edu', role: 'student', status: 'active', joined: '2024-08-17' },
-    { id: 4, name: 'Dr. Sharma', email: 'sharma@uni.edu', role: 'admin', status: 'active', joined: '2024-01-15' },
-    { id: 5, name: 'Mr. Verma', email: 'verma@uni.edu', role: 'admin', status: 'active', joined: '2024-03-20' },
-    { id: 6, name: 'Administrator', email: 'admin@uni.edu', role: 'superadmin', status: 'active', joined: '2023-01-01' },
-    { id: 7, name: 'Neha Gupta', email: 'neha@uni.edu', role: 'student', status: 'inactive', joined: '2024-08-18' },
-    { id: 8, name: 'Vikram Reddy', email: 'vikram@uni.edu', role: 'student', status: 'active', joined: '2024-08-19' },
-  ],
 
   render() {
     const filtered = this.getFiltered();
@@ -70,18 +60,15 @@ const SuperAdminUsers = {
                   <td style="font-size:0.85rem">${Utils.sanitize(u.email)}</td>
                   <td>
                     <span class="badge badge-${u.role === 'superadmin' ? 'warning' : u.role === 'admin' ? 'info' : 'success'}">
-                      ${u.role === 'superadmin' ? 'Super Admin' : Utils.capitalize(u.role)}
+                      ${u.role === 'superadmin' ? 'Super Admin' : Utils.capitalize(u.role || 'student')}
                     </span>
                   </td>
-                  <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${Utils.capitalize(u.status)}</span></td>
-                  <td style="font-size:0.85rem">${Utils.formatDate(u.joined)}</td>
+                  <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${Utils.capitalize(u.status || 'active')}</span></td>
+                  <td style="font-size:0.85rem">${Utils.formatDate(u.joined || u.createdAt)}</td>
                   <td>
                     <div style="display:flex;gap:6px">
-                      <button class="btn-sm quick-action-btn quick-action-btn--secondary" style="padding:6px 10px;font-size:0.75rem" onclick="SuperAdminUsers.viewUser(${u.id})">
+                      <button class="btn-sm quick-action-btn quick-action-btn--secondary" style="padding:6px 10px;font-size:0.75rem" onclick="SuperAdminUsers.viewUser('${u.id}', '${u.type || 'student'}')">
                         ${icons.eye || ''}
-                      </button>
-                      <button class="btn-sm quick-action-btn quick-action-btn--danger" style="padding:6px 10px;font-size:0.75rem" onclick="SuperAdminUsers.toggleStatus(${u.id})">
-                        ${icons.delete || ''}
                       </button>
                     </div>
                   </td>
@@ -97,8 +84,14 @@ const SuperAdminUsers = {
   },
 
   getFiltered() {
-    let result = this.users;
-    if (this.currentFilter !== 'all') result = result.filter(u => u.role === this.currentFilter);
+    // Combine students and admins into a single user list
+    const students = Store.getAll('students').map(s => ({ ...s, role: 'student', type: 'student', status: 'active' }));
+    const admins = Store.getAll('admins').map(a => ({ ...a, role: 'admin', type: 'admin' }));
+    let result = [...students, ...admins];
+
+    if (this.currentFilter !== 'all') {
+      result = result.filter(u => u.role === this.currentFilter);
+    }
     if (this.searchQuery) {
       result = result.filter(u => u.name.toLowerCase().includes(this.searchQuery) || u.email.toLowerCase().includes(this.searchQuery));
     }
@@ -129,32 +122,32 @@ const SuperAdminUsers = {
     `;
   },
 
-  viewUser(id) {
-    const user = this.users.find(u => u.id === id);
+  viewUser(id, type) {
+    let user = null;
+    if (type === 'admin') {
+      user = Store.getById('admins', id);
+    } else {
+      user = Store.getById('students', id);
+    }
     if (!user) return;
+
+    const role = type === 'admin' ? 'admin' : 'student';
     const body = document.getElementById('userDetailBody');
     body.innerHTML = `
       <div style="text-align:center;margin-bottom:20px">
         <div class="avatar avatar-lg" style="margin:0 auto 12px">${Utils.getInitials(user.name)}</div>
         <h4 style="margin:0">${Utils.sanitize(user.name)}</h4>
         <p style="color:var(--text-secondary);margin:4px 0">${Utils.sanitize(user.email)}</p>
-        <span class="badge badge-${user.role === 'superadmin' ? 'warning' : user.role === 'admin' ? 'info' : 'success'}">${user.role === 'superadmin' ? 'Super Admin' : Utils.capitalize(user.role)}</span>
+        <span class="badge badge-${role === 'admin' ? 'info' : 'success'}">${Utils.capitalize(role)}</span>
       </div>
       <div class="profile-info-grid" style="grid-template-columns:1fr 1fr">
-        <div class="profile-info-item"><div class="profile-info-label">Status</div><div class="profile-info-value">${Utils.capitalize(user.status)}</div></div>
-        <div class="profile-info-item"><div class="profile-info-label">Joined</div><div class="profile-info-value">${Utils.formatDate(user.joined)}</div></div>
+        ${user.phone ? `<div class="profile-info-item"><div class="profile-info-label">Phone</div><div class="profile-info-value">${Utils.sanitize(user.phone)}</div></div>` : ''}
+        ${user.dept ? `<div class="profile-info-item"><div class="profile-info-label">Department</div><div class="profile-info-value">${Utils.sanitize(user.dept)}</div></div>` : ''}
+        ${user.hostel ? `<div class="profile-info-item"><div class="profile-info-label">Hostel</div><div class="profile-info-value">${typeof user.hostel === 'string' ? Utils.sanitize(user.hostel) : (Store.getById('hostels', user.hostel)?.name || 'Unassigned')}</div></div>` : ''}
+        <div class="profile-info-item"><div class="profile-info-label">Joined</div><div class="profile-info-value">${Utils.formatDate(user.joined || user.createdAt)}</div></div>
       </div>
     `;
     document.getElementById('userDetailModal').classList.remove('hidden');
-  },
-
-  toggleStatus(id) {
-    const user = this.users.find(u => u.id === id);
-    if (user) {
-      user.status = user.status === 'active' ? 'inactive' : 'active';
-      this.refresh();
-      showToast(`User ${user.status === 'active' ? 'activated' : 'deactivated'}`, 'info');
-    }
   },
 
   refresh() {

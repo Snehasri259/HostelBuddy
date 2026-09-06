@@ -4,24 +4,44 @@
  */
 
 const AdminStudents = {
-  data: [
-    { id: 1, name: 'Ravi Kumar', email: 'ravi@test.com', phone: '9876543210', dept: 'B.Tech CS', year: '3rd', hostel: 'Boys Hostel A', room: 'Block B, Room 205', status: 'active', joined: '2025-01-15' },
-    { id: 2, name: 'Amit Patel', email: 'amit@test.com', phone: '9876543211', dept: 'B.Tech ECE', year: '2nd', hostel: 'Boys Hostel A', room: 'Block A, Room 101', status: 'active', joined: '2025-01-14' },
-    { id: 3, name: 'Vikram Reddy', email: 'vikram@test.com', phone: '9876543212', dept: 'B.Tech ME', year: '4th', hostel: 'Boys Hostel A', room: 'Block A, Room 102', status: 'active', joined: '2025-01-13' },
-    { id: 4, name: 'Rahul Verma', email: 'rahul@test.com', phone: '9876543213', dept: 'B.Tech CS', year: '3rd', hostel: 'Boys Hostel A', room: 'Block A, Room 102', status: 'active', joined: '2025-01-12' },
-    { id: 5, name: 'Priya Singh', email: 'priya@test.com', phone: '9876543214', dept: 'B.Tech IT', year: '3rd', hostel: 'Girls Hostel A', room: 'Block A, Room 101', status: 'active', joined: '2025-01-11' },
-    { id: 6, name: 'Neha Gupta', email: 'neha@test.com', phone: '9876543215', dept: 'B.Tech CS', year: '2nd', hostel: 'Girls Hostel A', room: 'Block A, Room 101', status: 'active', joined: '2025-01-10' },
-    { id: 7, name: 'Suresh Nair', email: 'suresh@test.com', phone: '9876543216', dept: 'B.Tech EE', year: '3rd', hostel: 'Boys Hostel A', room: 'Block A, Room 102', status: 'active', joined: '2025-01-09' },
-    { id: 8, name: 'Karthik Iyer', email: 'karthik@test.com', phone: '9876543217', dept: 'B.Tech CS', year: '4th', hostel: 'Boys Hostel A', room: 'Block B, Room 201', status: 'active', joined: '2025-01-08' },
-    { id: 9, name: 'Sneha Joshi', email: 'sneha@test.com', phone: '9876543218', dept: 'B.Tech IT', year: '2nd', hostel: 'Girls Hostel A', room: 'Block A, Room 201', status: 'active', joined: '2025-01-07' },
-    { id: 10, name: 'Ananya Das', email: 'ananya@test.com', phone: '9876543219', dept: 'B.Tech ECE', year: '3rd', hostel: 'Girls Hostel A', room: 'Block A, Room 201', status: 'inactive', joined: '2025-01-06' },
-  ],
-
   filteredData: [],
   searchTerm: '',
   filterHostel: 'all',
 
+  _loadFromStore() {
+    if (typeof Store === 'undefined') return [];
+    const students = Store.getAll('students');
+    const beds = Store.getAll('beds');
+    const rooms = Store.getAll('rooms');
+    const hostels = Store.getAll('hostels');
+    return students.map(s => {
+      const bed = beds.find(b => b.studentId === s.id && b.status === 'occupied');
+      let hostelName = '', roomInfo = '-';
+      if (bed) {
+        const room = rooms.find(r => r.id === bed.roomId);
+        if (room) {
+          const hostel = hostels.find(h => h.id === room.hostelId);
+          hostelName = hostel ? hostel.name : '';
+          roomInfo = 'Block ' + room.block + ', Room ' + room.number;
+        }
+      }
+      return {
+        id: s.id,
+        name: s.name,
+        email: s.email,
+        phone: s.phone,
+        dept: s.dept,
+        year: s.year,
+        hostel: hostelName,
+        room: roomInfo,
+        status: 'active',
+        joined: s.joined,
+      };
+    });
+  },
+
   render() {
+    this.data = this._loadFromStore();
     this.filteredData = [...this.data];
     return `
       <div class="page-header">
@@ -77,7 +97,7 @@ const AdminStudents = {
           <button class="filter-tab" onclick="AdminStudents.filterByHostel('girls')">Girls Hostel</button>
         </div>
         <div class="search-box">
-          <span class="search-icon">${icons.search}</span>
+          <span class="search-icon">${icons.search || ''}</span>
           <input type="text" placeholder="Search students..." class="search-input" oninput="AdminStudents.search(this.value)">
         </div>
       </div>

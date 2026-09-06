@@ -344,11 +344,7 @@ const AdminAllocation = {
                 <label class="form-label">Select Student</label>
                 <select class="form-select" id="allocStudent" required>
                   <option value="">Choose a student</option>
-                  <option value="1">Ravi Kumar (ravi@uni.edu)</option>
-                  <option value="2">Priya Singh (priya@uni.edu)</option>
-                  <option value="3">Amit Patel (amit@uni.edu)</option>
-                  <option value="4">Neha Gupta (neha@uni.edu)</option>
-                  <option value="5">Vikram Reddy (vikram@uni.edu)</option>
+                  ${this._getStudentOptions()}
                 </select>
               </div>
               
@@ -569,27 +565,40 @@ const AdminAllocation = {
   // ============================================
 
   viewAllocation(id) {
-    const alloc = this.allocations.find(a => a.id === id);
+    const alloc = this.allocations.find(a => String(a.id) === String(id));
     if (alloc) {
-      showToast(`${alloc.studentName} - ${alloc.hostel === 'boys' ? 'Boys' : 'Girls'} ${alloc.block}${alloc.room}, Bed ${alloc.bed}`, 'info');
+      showToast(alloc.studentName + ' - ' + (alloc.hostel === 'boys' ? 'Boys' : 'Girls') + ' ' + alloc.block + alloc.room + ', Bed ' + alloc.bed, 'info');
     }
+  },
+
+  _getStudentOptions() {
+    if (typeof Store === 'undefined') return '';
+    const students = Store.getAll('students');
+    const allocatedIds = Store.getAll('beds').filter(b => b.status === 'occupied').map(b => b.studentId);
+    return students
+      .filter(s => !allocatedIds.includes(s.id))
+      .map(s => '<option value="' + s.id + '">' + Utils.sanitize(s.name) + ' (' + Utils.sanitize(s.email) + ')</option>')
+      .join('');
   },
 
   deallocateBed(id) {
     if (!confirm('Are you sure you want to deallocate this bed?')) return;
 
     if (typeof Store !== 'undefined') {
-      const result = Store.deallocateBed(id);
-      if (result.success) {
-        this._loadFromStore();
-        this._generateRoomsFromStore();
-        this.refresh();
-        showToast('Bed deallocated successfully', 'info');
-      } else {
-        showToast(result.error, 'error');
+      const alloc = this.allocations.find(a => String(a.id) === String(id));
+      if (alloc) {
+        const result = Store.deallocateBed(id);
+        if (result.success) {
+          this._loadFromStore();
+          this._generateRoomsFromStore();
+          this.refresh();
+          showToast('Bed deallocated successfully', 'info');
+        } else {
+          showToast(result.error, 'error');
+        }
       }
     } else {
-      this.allocations = this.allocations.filter(a => a.id !== id);
+      this.allocations = this.allocations.filter(a => String(a.id) !== String(id));
       this.refresh();
       showToast('Bed deallocated successfully', 'info');
     }
