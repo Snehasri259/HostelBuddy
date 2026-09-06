@@ -70,6 +70,8 @@
   <script src="js/pages/admin/announcements.js"></script>
   <script src="js/pages/admin/students.js"></script>
   <script src="js/pages/admin/reports.js"></script>
+  <script src="js/pages/admin/profile.js"></script>
+  <script src="js/pages/admin/settings.js"></script>
   
   <!-- Super Admin Pages -->
   <script src="js/pages/superadmin/dashboard.js"></script>
@@ -331,6 +333,8 @@
           'admin/visitors':         function() { return AdminVisitors.render(); },
           'admin/announcements':    function() { return AdminAnnouncements.render(); },
           'admin/reports':          function() { return Reports.render(); },
+          'admin/profile':          function() { return AdminProfile.render(); },
+          'admin/settings':         function() { return AdminSettings.render(); },
           'superadmin/dashboard':   function() { return SuperAdminDashboard.render(); },
           'superadmin/hostels':     function() { return SuperAdminHostels.render(); },
           'superadmin/admins':      function() { return SuperAdminAdmins.render(); },
@@ -410,6 +414,8 @@
               'admin/visitors':         function() { AdminVisitors.init && AdminVisitors.init(); },
               'admin/announcements':    function() { AdminAnnouncements.init && AdminAnnouncements.init(); },
               'admin/reports':          function() { Reports.init && Reports.init(); },
+              'admin/profile':          function() { AdminProfile.init && AdminProfile.init(); },
+              'admin/settings':         function() { AdminSettings.init && AdminSettings.init(); },
               'superadmin/dashboard':   function() { SuperAdminDashboard.init && SuperAdminDashboard.init(); },
               'superadmin/hostels':     function() { SuperAdminHostels.init && SuperAdminHostels.init(); },
               'superadmin/admins':      function() { SuperAdminAdmins.init && SuperAdminAdmins.init(); },

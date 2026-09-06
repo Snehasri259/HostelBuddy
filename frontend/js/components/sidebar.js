@@ -25,6 +25,8 @@ const Sidebar = {
       { icon: 'visitor', label: 'Visitors', hash: '#admin/visitors' },
       { icon: 'announcement', label: 'Announcements', hash: '#admin/announcements' },
       { icon: 'bar-chart', label: 'Reports', hash: '#admin/reports' },
+      { icon: 'users', label: 'Profile', hash: '#admin/profile' },
+      { icon: 'settings', label: 'Settings', hash: '#admin/settings' },
     ],
     superadmin: [
       { icon: 'dashboard', label: 'Dashboard', hash: '#superadmin/dashboard' },
