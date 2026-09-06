@@ -5,13 +5,11 @@
 
 const StudentVisitors = {
   currentFilter: 'all',
-  visitors: [
-    { id: 1, name: 'Rajesh Kumar', relation: 'Parent', phone: '9876543200', purpose: 'Family visit', date: new Date(Date.now() + 86400000), time: '14:00', duration: '2 hours', status: 'approved' },
-    { id: 2, name: 'Sunita Devi', relation: 'Parent', phone: '9876543201', purpose: 'Bring medicines', date: new Date(Date.now() - 86400000), time: '10:00', duration: '1 hour', status: 'completed' },
-    { id: 3, name: 'Amit Verma', relation: 'Friend', phone: '9876543202', purpose: 'Study group', date: new Date(Date.now() - 259200000), time: '15:00', duration: '3 hours', status: 'completed' },
-    { id: 4, name: 'Priya Sharma', relation: 'Sibling', phone: '9876543203', purpose: 'Personal', date: new Date(Date.now() + 172800000), time: '11:00', duration: '2 hours', status: 'pending' },
-    { id: 5, name: 'Vikram Singh', relation: 'Friend', phone: '9876543204', purpose: 'Project work', date: new Date(Date.now() - 432000000), time: '16:00', duration: '2 hours', status: 'rejected' },
-  ],
+
+  get visitors() {
+    const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
+    return Store.getAll('visitors').filter(v => v.studentId === user.id);
+  },
 
   render() {
     const filtered = this.getFiltered();
@@ -208,20 +206,20 @@ const StudentVisitors = {
 const VisitorForm = {
   submit(e) {
     e.preventDefault();
+    const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
     
-    const newVisitor = {
-      id: Date.now(),
+    Store.add('visitors', {
+      studentId: user.id,
       name: document.getElementById('visitorName').value,
       relation: document.getElementById('visitorRelation').value,
       phone: document.getElementById('visitorPhone').value,
       purpose: document.getElementById('visitorPurpose').value,
-      date: new Date(document.getElementById('visitorDate').value),
+      date: document.getElementById('visitorDate').value,
       time: document.getElementById('visitorTime').value,
       duration: document.getElementById('visitorDuration').value,
       status: 'pending',
-    };
+    });
 
-    StudentVisitors.visitors.unshift(newVisitor);
     StudentVisitors.closeModal();
     StudentVisitors.refresh();
     showToast('Visitor registered, pending approval', 'success');

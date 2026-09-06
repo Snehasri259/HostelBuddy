@@ -12,53 +12,39 @@ const AdminRooms = {
 
   init() {
     this.generateRooms();
-    // Expand first hostel by default
     this.expandedSections.add('boys');
     console.log('[HostelBuddy] Admin Rooms initialized');
   },
 
   generateRooms() {
     this.rooms = [];
-    const hostels = [
-      { id: 'boys', name: 'Boys Hostel', blocks: ['A', 'B'] },
-      { id: 'girls', name: 'Girls Hostel', blocks: ['A', 'B'] },
-    ];
-
-    hostels.forEach(hostel => {
-      hostel.blocks.forEach(block => {
-        for (let floor = 1; floor <= 3; floor++) {
-          for (let room = 1; room <= 5; room++) {
-            const roomNum = parseInt(`${floor}0${room}`);
-            const beds = Array.from({ length: 4 }, (_, i) => ({
-              number: i + 1,
-              occupied: Math.random() > 0.4, // ~60% occupancy
-              student: Math.random() > 0.4 ? this.getRandomStudent() : null,
-            }));
-
-            this.rooms.push({
-              id: `${hostel.id}-${block}-${floor}-${room}`,
-              hostel: hostel.id,
-              hostelName: hostel.name,
-              block,
-              floor,
-              number: roomNum,
-              beds,
-              totalBeds: 4,
-              occupiedBeds: beds.filter(b => b.occupied).length,
-            });
-          }
-        }
+    if (typeof Store !== 'undefined') {
+      const storeRooms = Store.getAll('rooms');
+      const storeBeds = Store.getAll('beds');
+      const hostels = Store.getAll('hostels');
+      const students = Store.getAll('students');
+      storeRooms.forEach(room => {
+        const hostel = hostels.find(h => h.id === room.hostelId);
+        const roomBeds = storeBeds.filter(b => b.roomId === room.id);
+        this.rooms.push({
+          id: room.id,
+          hostel: hostel ? (hostel.type === 'boys' ? 'boys' : 'girls') : 'boys',
+          hostelName: hostel ? hostel.name : 'Unknown',
+          block: room.block,
+          floor: room.floor,
+          number: room.number,
+          beds: roomBeds.map(b => {
+            const student = b.studentId ? students.find(s => s.id === b.studentId) : null;
+            return { number: b.number, occupied: b.status === 'occupied', student: student ? student.name : null };
+          }),
+          totalBeds: room.capacity || 4,
+          occupiedBeds: roomBeds.filter(b => b.status === 'occupied').length,
+        });
       });
-    });
-  },
-
-  getRandomStudent() {
-    const students = [
-      'Ravi Kumar', 'Priya Singh', 'Amit Patel', 'Neha Gupta', 
-      'Vikram Reddy', 'Sneha Joshi', 'Rahul Verma', 'Ananya Das',
-      'Karthik Nair', 'Meera Iyer'
-    ];
-    return students[Math.floor(Math.random() * students.length)];
+    } else {
+      // Fallback: empty
+      this.rooms = [];
+    }
   },
 
   render() {

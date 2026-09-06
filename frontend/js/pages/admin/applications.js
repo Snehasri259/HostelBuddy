@@ -10,18 +10,14 @@ const AdminApplications = {
   itemsPerPage: 8,
   selectedIds: new Set(),
 
-  applications: [
-    { id: 1, name: 'Ravi Kumar', email: 'ravi@uni.edu', phone: '9876543210', date: new Date(Date.now() - 7200000), hostel: 'boys', requirements: 'Ground floor preferred, near library', guardian: { name: 'Suresh Kumar', phone: '9876543211' }, status: 'pending' },
-    { id: 2, name: 'Priya Singh', email: 'priya@uni.edu', phone: '9876543220', date: new Date(Date.now() - 86400000), hostel: 'girls', requirements: 'Near mess hall', guardian: { name: 'Raj Singh', phone: '9876543221' }, status: 'pending' },
-    { id: 3, name: 'Amit Patel', email: 'amit@uni.edu', phone: '9876543230', date: new Date(Date.now() - 172800000), hostel: 'boys', requirements: 'Top floor, corner room', guardian: { name: 'Mahesh Patel', phone: '9876543231' }, status: 'approved', allocation: { block: 'B', floor: 2, room: 205, bed: 3 } },
-    { id: 4, name: 'Neha Gupta', email: 'neha@uni.edu', phone: '9876543240', date: new Date(Date.now() - 259200000), hostel: 'girls', requirements: 'Any floor', guardian: { name: 'Anil Gupta', phone: '9876543241' }, status: 'approved', allocation: { block: 'D', floor: 1, room: 102, bed: 1 } },
-    { id: 5, name: 'Vikram Reddy', email: 'vikram@uni.edu', phone: '9876543250', date: new Date(Date.now() - 345600000), hostel: 'boys', requirements: 'AC room if available', guardian: { name: 'Srinivas Reddy', phone: '9876543251' }, status: 'rejected', rejectReason: 'AC rooms not available in requested hostel' },
-    { id: 6, name: 'Sneha Joshi', email: 'sneha@uni.edu', phone: '9876543260', date: new Date(Date.now() - 432000000), hostel: 'girls', requirements: 'Near study room', guardian: { name: 'Vinay Joshi', phone: '9876543261' }, status: 'pending' },
-    { id: 7, name: 'Rahul Verma', email: 'rahul@uni.edu', phone: '9876543270', date: new Date(Date.now() - 518400000), hostel: 'boys', requirements: 'Ground floor only', guardian: { name: 'Deepak Verma', phone: '9876543271' }, status: 'approved', allocation: { block: 'A', floor: 1, room: 101, bed: 2 } },
-    { id: 8, name: 'Ananya Das', email: 'ananya@uni.edu', phone: '9876543280', date: new Date(Date.now() - 604800000), hostel: 'girls', requirements: 'None', guardian: { name: 'Prakash Das', phone: '9876543281' }, status: 'rejected', rejectReason: 'Hostel full for the requested term' },
-    { id: 9, name: 'Karthik Nair', email: 'karthik@uni.edu', phone: '9876543290', date: new Date(Date.now() - 691200000), hostel: 'boys', requirements: 'Near gym', guardian: { name: 'Raman Nair', phone: '9876543291' }, status: 'pending' },
-    { id: 10, name: 'Meera Iyer', email: 'meera@uni.edu', phone: '9876543300', date: new Date(Date.now() - 777600000), hostel: 'girls', requirements: 'Quiet floor preferred', guardian: { name: 'Ganesh Iyer', phone: '9876543301' }, status: 'pending' },
-  ],
+  get applications() {
+    return Store.getAll('applications').map(app => {
+      const student = Store.getById('students', app.studentId);
+      return { ...app, studentName: student ? student.name : 'Unknown', studentEmail: student ? student.email : '', studentPhone: student ? student.phone : '' };
+    });
+  },
+
+  _oldData: null, // Removed - using Store
 
   render() {
     const filtered = this.getFilteredApplications();
@@ -422,15 +418,15 @@ const AdminApplications = {
           <div class="profile-info-grid" style="grid-template-columns:1fr 1fr">
             <div class="profile-info-item">
               <div class="profile-info-label">Name</div>
-              <div class="profile-info-value">${Utils.sanitize(app.name)}</div>
+              <div class="profile-info-value">${Utils.sanitize(app.studentName || 'Unknown')}</div>
             </div>
             <div class="profile-info-item">
               <div class="profile-info-label">Email</div>
-              <div class="profile-info-value">${Utils.sanitize(app.email)}</div>
+              <div class="profile-info-value">${Utils.sanitize(app.studentEmail || '')}</div>
             </div>
             <div class="profile-info-item">
               <div class="profile-info-label">Phone</div>
-              <div class="profile-info-value">${Utils.sanitize(app.phone)}</div>
+              <div class="profile-info-value">${Utils.sanitize(app.studentPhone || '')}</div>
             </div>
             <div class="profile-info-item">
               <div class="profile-info-label">Applied</div>
@@ -465,11 +461,11 @@ const AdminApplications = {
           <div class="profile-info-grid" style="grid-template-columns:1fr 1fr">
             <div class="profile-info-item">
               <div class="profile-info-label">Name</div>
-              <div class="profile-info-value">${Utils.sanitize(app.guardian.name)}</div>
+              <div class="profile-info-value">${Utils.sanitize(app.guardianName || 'Not provided')}</div>
             </div>
             <div class="profile-info-item">
               <div class="profile-info-label">Phone</div>
-              <div class="profile-info-value">${Utils.sanitize(app.guardian.phone)}</div>
+              <div class="profile-info-value">${Utils.sanitize(app.guardianPhone || 'Not provided')}</div>
             </div>
           </div>
         </div>
@@ -595,12 +591,21 @@ const AdminApplications = {
 
   submitAllocation(e) {
     e.preventDefault();
-    const appId = parseInt(document.getElementById('allocAppId').value);
-    const app = this.applications.find(a => a.id === appId);
+    const appId = document.getElementById('allocAppId').value;
     
-    if (app) {
-      app.status = 'approved';
-      app.allocation = {
+    // Update Store
+    if (typeof Store !== 'undefined') {
+      const app = Store.getById('applications', appId);
+      if (app) {
+        Store.update('applications', appId, { status: 'approved', remarks: document.getElementById('allocBlock').value + ' ' + document.getElementById('allocRoom').value });
+      }
+    }
+
+    // Update local
+    const localApp = this.applications.find(a => a.id === appId);
+    if (localApp) {
+      localApp.status = 'approved';
+      localApp.allocation = {
         block: document.getElementById('allocBlock').value,
         floor: parseInt(document.getElementById('allocFloor').value),
         room: parseInt(document.getElementById('allocRoom').value),
@@ -614,7 +619,7 @@ const AdminApplications = {
   },
 
   confirmReject() {
-    const appId = parseInt(document.getElementById('rejectAppId').value);
+    const appId = document.getElementById('rejectAppId').value;
     const reason = document.getElementById('rejectReason').value.trim();
     
     if (!reason) {
@@ -622,6 +627,12 @@ const AdminApplications = {
       return;
     }
 
+    // Update Store
+    if (typeof Store !== 'undefined') {
+      Store.update('applications', appId, { status: 'rejected', remarks: reason });
+    }
+
+    // Update local
     const app = this.applications.find(a => a.id === appId);
     if (app) {
       app.status = 'rejected';

@@ -5,13 +5,10 @@
 
 const AdminAnnouncements = {
   currentFilter: 'all',
-  announcements: [
-    { id: 1, title: 'Hostel Timings Updated', category: 'Important', content: 'Please note that hostel gates will now close at 10 PM instead of 11 PM starting next week.', date: new Date(Date.now() - 86400000), author: 'Dr. Sharma', pinned: true, status: 'published', views: 156, audience: 'All Students' },
-    { id: 2, title: 'Mess Menu Change', category: 'General', content: 'New mess menu for this semester has been uploaded. Check the notice board for details.', date: new Date(Date.now() - 259200000), author: 'Mess Committee', pinned: false, status: 'published', views: 89, audience: 'All Students' },
-    { id: 3, title: 'Annual Sports Day', category: 'Event', content: 'Annual sports day will be held on February 15th. All students are encouraged to participate.', date: new Date(Date.now() - 432000000), author: 'Sports Committee', pinned: false, status: 'published', views: 124, audience: 'All Students' },
-    { id: 4, title: 'Maintenance Schedule', category: 'Maintenance', content: 'Water supply will be disrupted on Saturday from 10 AM to 2 PM for pipe maintenance.', date: new Date(Date.now() - 604800000), author: 'Maintenance Team', pinned: false, status: 'published', views: 203, audience: 'Boys Hostel' },
-    { id: 5, title: 'Room Inspection Notice', category: 'General', content: 'Room inspection will be conducted next Monday. Keep your rooms clean.', date: new Date(), author: 'Admin', pinned: false, status: 'draft', views: 0, audience: 'Girls Hostel' },
-  ],
+
+  get announcements() {
+    return Store.getAll('announcements');
+  },
 
   render() {
     return `
@@ -177,13 +174,11 @@ const AdminAnnouncements = {
     };
 
     if (editId) {
-      const ann = this.announcements.find(a => a.id === parseInt(editId));
-      if (ann) Object.assign(ann, data);
+      Store.update('announcements', editId, data);
     } else {
-      this.announcements.unshift({
-        id: Date.now(),
+      Store.add('announcements', {
         ...data,
-        date: new Date(),
+        date: new Date().toISOString(),
         author: 'Admin',
         views: 0,
       });
@@ -196,14 +191,14 @@ const AdminAnnouncements = {
 
   delete(id) {
     if (!confirm('Delete this announcement?')) return;
-    this.announcements = this.announcements.filter(a => a.id !== id);
+    Store.remove('announcements', id);
     this.refresh();
     showToast('Announcement deleted', 'info');
   },
 
   togglePin(id) {
-    const ann = this.announcements.find(a => a.id === id);
-    if (ann) { ann.pinned = !ann.pinned; this.refresh(); }
+    const ann = Store.getById('announcements', id);
+    if (ann) { Store.update('announcements', id, { pinned: !ann.pinned }); this.refresh(); }
   },
 
   closeModal() {

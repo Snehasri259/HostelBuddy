@@ -4,15 +4,22 @@
  */
 
 const SuperAdminDashboard = {
-  data: {
-    stats: {
-      totalStudents: 450,
-      totalHostels: 4,
-      totalRooms: 320,
-      occupancyRate: 85,
-      activeComplaints: 12,
+  _loadFromStore() {
+    if (typeof Store === 'undefined') return { totalStudents: 0, totalHostels: 0, totalRooms: 0, occupancyRate: 0, activeComplaints: 0, systemHealth: 100, boysStudents: 0, girlsStudents: 0 };
+    const s = Store.getStats();
+    return {
+      totalStudents: s.totalStudents,
+      totalHostels: Store.getAll('hostels').length,
+      totalRooms: s.totalBeds,
+      occupancyRate: s.occupancyPercent,
+      activeComplaints: s.openComplaints,
       systemHealth: 98,
-    },
+      boysStudents: s.boysStudents,
+      girlsStudents: s.girlsStudents,
+    };
+  },
+
+  data: {
     recentActivity: [
       { text: 'New admin registered: Dr. Sharma', time: new Date(Date.now() - 3600000), type: 'success' },
       { text: 'Room Block C updated', time: new Date(Date.now() - 10800000), type: 'info' },
@@ -23,7 +30,7 @@ const SuperAdminDashboard = {
   },
 
   render() {
-    const { stats } = this.data;
+    const stats = this._loadFromStore();
     
     return `
       <div class="section-header" style="margin-bottom:24px">
@@ -88,12 +95,25 @@ const SuperAdminDashboard = {
   },
 
   renderOccupancyChart() {
-    const hostels = [
-      { name: 'Boys A', occupancy: 90 },
-      { name: 'Boys B', occupancy: 75 },
-      { name: 'Girls A', occupancy: 85 },
-      { name: 'Girls B', occupancy: 60 },
+    let hostels = [
+      { name: 'Boys A', occupancy: 0 },
+      { name: 'Boys B', occupancy: 0 },
+      { name: 'Girls A', occupancy: 0 },
+      { name: 'Girls B', occupancy: 0 },
     ];
+    if (typeof Store !== 'undefined') {
+      const storeHostels = Store.getAll('hostels');
+      const storeRooms = Store.getAll('rooms');
+      const storeBeds = Store.getAll('beds');
+      const labels = { h1: 'Boys A', h2: 'Boys B', h3: 'Girls A', h4: 'Girls B' };
+      hostels = storeHostels.map(h => {
+        const hRooms = storeRooms.filter(r => r.hostelId === h.id);
+        const hBeds = storeBeds.filter(b => hRooms.some(r => r.id === b.roomId));
+        const occupied = hBeds.filter(b => b.status === 'occupied').length;
+        const total = hBeds.length;
+        return { name: labels[h.id] || h.name, occupancy: total ? Math.round((occupied / total) * 100) : 0 };
+      });
+    }
 
     return `
       <div class="card fade-in stagger-5" style="padding:20px">

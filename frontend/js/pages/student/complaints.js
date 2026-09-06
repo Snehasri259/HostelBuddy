@@ -5,13 +5,11 @@
 
 const StudentComplaints = {
   currentFilter: 'all',
-  complaints: [
-    { id: 1, title: 'Broken ceiling fan', category: 'Maintenance', priority: 'medium', status: 'in_progress', description: 'The ceiling fan in my room is making strange noises and sometimes stops working. It has been like this for 3 days.', date: new Date(Date.now() - 172800000), updated: new Date(Date.now() - 86400000), responses: [{ author: 'Admin', text: 'We have noted your complaint. A technician will visit tomorrow.', date: new Date(Date.now() - 86400000) }] },
-    { id: 2, title: 'Water leakage in bathroom', category: 'Maintenance', priority: 'high', status: 'open', description: 'There is a water leakage from the pipe under the sink. The floor is getting wet and it is a safety hazard.', date: new Date(Date.now() - 43200000), updated: new Date(Date.now() - 43200000), responses: [] },
-    { id: 3, title: 'Noise disturbance at night', category: 'Noise', priority: 'low', status: 'resolved', description: 'Students in the adjacent room are playing loud music after 11 PM consistently.', date: new Date(Date.now() - 604800000), updated: new Date(Date.now() - 518400000), responses: [{ author: 'Admin', text: 'Warning issued to the students. Please let us know if the issue persists.', date: new Date(Date.now() - 518400000) }] },
-    { id: 4, title: 'Dirty common area', category: 'Cleanliness', priority: 'medium', status: 'open', description: 'The common area on 2nd floor is not being cleaned properly. There is accumulated dust and garbage.', date: new Date(Date.now() - 259200000), updated: new Date(Date.now() - 259200000), responses: [] },
-    { id: 5, title: 'Broken window lock', category: 'Maintenance', priority: 'low', status: 'resolved', description: 'The lock on the window is broken and needs to be replaced. It was reported earlier but not fixed.', date: new Date(Date.now() - 864000000), updated: new Date(Date.now() - 691200000), responses: [{ author: 'Admin', text: 'Lock has been replaced. Sorry for the delay.', date: new Date(Date.now() - 691200000) }] },
-  ],
+
+  get complaints() {
+    const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
+    return Store.getAll('complaints').filter(c => c.studentId === user.id);
+  },
 
   render() {
     const filtered = this.getFiltered();
@@ -93,16 +91,18 @@ const StudentComplaints = {
   },
 
   getFiltered() {
-    if (this.currentFilter === 'all') return this.complaints;
-    return this.complaints.filter(c => c.status === this.currentFilter);
+    const all = this.complaints;
+    if (this.currentFilter === 'all') return all;
+    return all.filter(c => c.status === this.currentFilter);
   },
 
   getCounts() {
+    const all = this.complaints;
     return {
-      all: this.complaints.length,
-      open: this.complaints.filter(c => c.status === 'open').length,
-      in_progress: this.complaints.filter(c => c.status === 'in_progress').length,
-      resolved: this.complaints.filter(c => c.status === 'resolved').length,
+      all: all.length,
+      open: all.filter(c => c.status === 'open').length,
+      in_progress: all.filter(c => c.status === 'in_progress').length,
+      resolved: all.filter(c => c.status === 'resolved').length,
     };
   },
 
@@ -192,21 +192,21 @@ const StudentComplaints = {
 
   submit(e) {
     e.preventDefault();
+    const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
     const priority = document.querySelector('input[name="priority"]:checked')?.value || 'medium';
     
-    const newComplaint = {
-      id: Date.now(),
+    Store.add('complaints', {
+      studentId: user.id,
       title: document.getElementById('compTitle').value,
       category: document.getElementById('compCategory').value,
       description: document.getElementById('compDescription').value,
       priority,
       status: 'open',
-      date: new Date(),
-      updated: new Date(),
+      date: new Date().toISOString(),
+      updated: new Date().toISOString(),
       responses: [],
-    };
+    });
 
-    this.complaints.unshift(newComplaint);
     this.closeModal('newComplaintModal');
     document.getElementById('newComplaintForm').reset();
     this.refresh();
@@ -234,7 +234,7 @@ const StudentComplaints = {
   },
 
   viewDetail(id) {
-    const complaint = this.complaints.find(c => c.id === id);
+    const complaint = Store.getById('complaints', id);
     if (!complaint) return;
 
     const body = document.getElementById('complaintDetailBody');
@@ -295,14 +295,15 @@ const StudentComplaints = {
     const text = input?.value.trim();
     if (!text) return;
 
-    const complaint = this.complaints.find(c => c.id === id);
+    const complaint = Store.getById('complaints', id);
     if (complaint) {
       complaint.responses.push({
         author: 'You',
         text,
-        date: new Date(),
+        date: new Date().toISOString(),
       });
-      complaint.updated = new Date();
+      complaint.updated = new Date().toISOString();
+      Store.update('complaints', id, { responses: complaint.responses, updated: complaint.updated });
       input.value = '';
       this.viewDetail(id);
       showToast('Comment added', 'success');

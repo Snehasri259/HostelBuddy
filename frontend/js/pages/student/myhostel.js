@@ -4,21 +4,47 @@
  */
 
 const StudentMyHostel = {
-  allocation: {
-    status: 'approved', // pending, approved, rejected
-    hostel: 'Boys Hostel A',
-    block: 'B',
-    floor: 2,
-    room: 205,
-    bed: 3,
-    allocationDate: '2025-01-20',
-    rejectReason: '',
-  },
+  allocation: null,
+  roommates: [],
 
-  roommates: [
-    { name: 'Amit Singh', initials: 'AS', course: 'B.Tech CS', year: '3rd Year', bed: 1 },
-    { name: 'Rahul Verma', initials: 'RV', course: 'B.Tech ECE', year: '3rd Year', bed: 2 },
-  ],
+  _loadFromStore() {
+    if (typeof Store === 'undefined') return;
+    const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
+    const studentId = user.studentId || user.id;
+    if (!studentId) {
+      this.allocation = null;
+      this.roommates = [];
+      return;
+    }
+    const app = Store.getApplicationByStudent(studentId);
+    const studentAllocations = Store.getStudentAllocations(studentId);
+    if (studentAllocations.length > 0) {
+      const alloc = studentAllocations[0];
+      this.allocation = {
+        status: 'approved',
+        hostel: alloc.hostel ? alloc.hostel.name : 'Boys Hostel',
+        block: alloc.room ? alloc.room.block : 'A',
+        floor: alloc.room ? alloc.room.floor : 1,
+        room: alloc.room ? alloc.room.number : 101,
+        bed: alloc.number,
+        allocationDate: alloc.allocationDate || '2025-01-20',
+        rejectReason: '',
+      };
+      this.roommates = Store.getRoommates(alloc.roomId, studentId).map(r => ({
+        name: r.student ? r.student.name : 'Unknown',
+        initials: r.student ? Utils.getInitials(r.student.name) : '??',
+        course: r.student ? r.student.dept : '',
+        year: r.student ? r.student.year + ' Year' : '',
+        bed: r.bed,
+      }));
+    } else if (app) {
+      this.allocation = { status: app.status, hostel: '', block: '', floor: 0, room: 0, bed: 0, allocationDate: app.date, rejectReason: app.remarks || '' };
+      this.roommates = [];
+    } else {
+      this.allocation = null;
+      this.roommates = [];
+    }
+  },
 
   rules: [
     'Quiet hours: 10 PM - 6 AM',
@@ -29,6 +55,7 @@ const StudentMyHostel = {
   ],
 
   render() {
+    this._loadFromStore();
     return `
       <div class="section-header" style="margin-bottom:24px">
         <h2 class="section-title" style="font-size:1.5rem;display:flex;align-items:center;gap:8px">

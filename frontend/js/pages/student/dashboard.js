@@ -48,7 +48,34 @@ const StudentDashboard = {
   /**
    * Render the complete dashboard
    */
+  _loadFromStore() {
+    if (typeof Store === 'undefined') return;
+    const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
+    const studentId = user.studentId || user.id;
+    if (!studentId) return;
+    const student = Store.getById('students', studentId);
+    const app = Store.getApplicationByStudent(studentId);
+    const allocs = Store.getStudentAllocations(studentId);
+    if (student) {
+      this.data.user = { name: student.name, email: student.email, phone: student.phone, rollNo: student.rollNo };
+    }
+    if (app) {
+      this.data.application = { status: app.status, date: app.date };
+    }
+    if (allocs.length > 0) {
+      const a = allocs[0];
+      this.data.room = { hostel: a.hostel ? a.hostel.name : '', block: a.room ? a.room.block : '', floor: a.room ? a.room.floor : 0, room: a.room ? a.room.number : 0, bed: a.number };
+      this.data.roommates = Store.getRoommates(a.roomId, studentId).map(r => ({ name: r.student ? r.student.name : '', initials: r.student ? Utils.getInitials(r.student.name) : '' }));
+    }
+    const myComplaints = Store.getAll('complaints').filter(c => c.studentId === studentId);
+    const myVisitors = Store.getAll('visitors').filter(v => v.studentId === studentId);
+    const announcements = Store.getAll('announcements').filter(a => a.status === 'published');
+    this.data.stats = { complaints: myComplaints.length, visitors: myVisitors.length, announcements: announcements.length };
+    this.data.announcements = announcements.slice(0, 3).map(a => ({ id: a.id, title: a.title, content: a.content, date: new Date(a.date), pinned: a.pinned }));
+  },
+
   render() {
+    this._loadFromStore();
     const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
     const userName = user.name || this.data.user.name;
     

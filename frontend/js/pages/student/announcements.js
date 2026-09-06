@@ -5,13 +5,10 @@
 
 const StudentAnnouncements = {
   expandedIds: new Set(),
-  announcements: [
-    { id: 1, title: 'Hostel Timings Updated', category: 'Important', content: 'Please note that hostel gates will now close at 10 PM instead of 11 PM starting next week. Students are expected to be inside the hostel premises before the gate closes. Late entries will require special permission from the warden.', date: new Date(Date.now() - 86400000), author: 'Dr. Sharma', pinned: true, views: 156 },
-    { id: 2, title: 'Mess Menu Change', category: 'General', content: 'New mess menu for this semester has been uploaded. Check the notice board for details. The menu has been revised based on student feedback from last semester. We have added more variety to the lunch menu.', date: new Date(Date.now() - 259200000), author: 'Mess Committee', pinned: false, views: 89 },
-    { id: 3, title: 'Annual Sports Day', category: 'Event', content: 'Annual sports day will be held on February 15th. All students are encouraged to participate. Registration forms are available at the admin office. Events include cricket, football, badminton, and athletics.', date: new Date(Date.now() - 432000000), author: 'Sports Committee', pinned: false, views: 124 },
-    { id: 4, title: 'Maintenance Schedule', category: 'Maintenance', content: 'Water supply will be disrupted on Saturday from 10 AM to 2 PM for pipe maintenance. Please store water accordingly. We apologize for the inconvenience.', date: new Date(Date.now() - 604800000), author: 'Maintenance Team', pinned: false, views: 203 },
-    { id: 5, title: 'Wi-Fi Network Upgrade', category: 'Maintenance', content: 'The hostel Wi-Fi network will be upgraded this weekend. There might be intermittent connectivity issues during the upgrade process. Expected completion by Sunday evening.', date: new Date(Date.now() - 864000000), author: 'IT Support', pinned: true, views: 178 },
-  ],
+
+  get announcements() {
+    return Store.getAll('announcements').filter(a => a.status === 'published');
+  },
 
   render() {
     const sorted = this.getSorted();

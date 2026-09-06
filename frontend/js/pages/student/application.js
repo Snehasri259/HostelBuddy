@@ -21,11 +21,20 @@ const StudentApplication = {
     roommatePreference: '',
   },
 
-  application: {
-    status: 'approved',
-    id: 'HB-2025-00142',
-    date: '2025-01-15',
-    hostel: 'Boys Hostel A',
+  application: null,
+
+  _loadFromStore() {
+    if (typeof Store === 'undefined') return;
+    const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
+    const studentId = user.studentId || user.id;
+    if (!studentId) { this.application = null; return; }
+    const app = Store.getApplicationByStudent(studentId);
+    if (app) {
+      const hostel = app.hostel === 'boys' ? 'Boys Hostel' : 'Girls Hostel';
+      this.application = { status: app.status, id: app.id, date: app.date, hostel };
+    } else {
+      this.application = null;
+    }
   },
 
   steps: [
@@ -36,11 +45,12 @@ const StudentApplication = {
   ],
 
   render() {
+    this._loadFromStore();
     const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
-    this.formData.fullName = user.name || 'Ravi Kumar';
-    this.formData.email = user.email || 'ravi@university.edu';
+    this.formData.fullName = user.name || '';
+    this.formData.email = user.email || '';
 
-    if (this.application.status === 'approved' || this.application.status === 'pending') {
+    if (this.application && (this.application.status === 'approved' || this.application.status === 'pending' || this.application.status === 'allocated')) {
       return this.renderStatus();
     }
     
@@ -632,13 +642,30 @@ const StudentApplication = {
     btn.innerHTML = '<span class="spinner"></span> Submitting...';
 
     setTimeout(() => {
-      this.application.status = 'approved';
-      this.application.id = 'HB-2025-' + Math.floor(Math.random() * 90000 + 10000);
-      this.application.date = new Date().toISOString();
+      if (typeof Store !== 'undefined') {
+        const user = JSON.parse(localStorage.getItem('hb_user') || '{}');
+        const studentId = user.studentId || user.id;
+        const newApp = Store.add('applications', {
+          studentId: studentId || 's1',
+          hostel: this.formData.hostel || 'boys',
+          status: 'pending',
+          requirements: this.formData.requirements || '',
+          guardianName: this.formData.guardianName || '',
+          guardianPhone: this.formData.guardianPhone || '',
+          emergencyPhone: this.formData.emergencyPhone || '',
+          date: new Date().toISOString().split('T')[0],
+          remarks: '',
+        });
+        this.application = { status: 'pending', id: newApp.id, date: newApp.date, hostel: newApp.hostel === 'boys' ? 'Boys Hostel' : 'Girls Hostel' };
+      } else {
+        this.application.status = 'pending';
+        this.application.id = 'HB-2025-' + Math.floor(Math.random() * 90000 + 10000);
+        this.application.date = new Date().toISOString();
+      }
       
       this.refresh();
       showToast('Application submitted successfully!', 'success');
-    }, 1500);
+    }, 800);
   },
 
   refresh() {

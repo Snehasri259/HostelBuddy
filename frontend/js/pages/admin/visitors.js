@@ -5,14 +5,10 @@
 
 const AdminVisitors = {
   currentFilter: 'all',
-  visitors: [
-    { id: 1, name: 'Rajesh Kumar', student: 'Ravi Kumar', relation: 'Parent', date: new Date(Date.now() + 86400000), time: '14:00', purpose: 'Family visit', status: 'approved' },
-    { id: 2, name: 'Sunita Devi', student: 'Ravi Kumar', relation: 'Parent', date: new Date(Date.now() - 86400000), time: '10:00', purpose: 'Bring medicines', status: 'completed' },
-    { id: 3, name: 'Amit Verma', student: 'Priya Singh', relation: 'Friend', date: new Date(Date.now() - 259200000), time: '15:00', purpose: 'Study group', status: 'completed' },
-    { id: 4, name: 'Priya Sharma', student: 'Neha Gupta', relation: 'Sibling', date: new Date(Date.now() + 172800000), time: '11:00', purpose: 'Personal', status: 'pending' },
-    { id: 5, name: 'Vikram Singh', student: 'Amit Patel', relation: 'Friend', date: new Date(Date.now() - 432000000), time: '16:00', purpose: 'Project work', status: 'rejected' },
-    { id: 6, name: 'Meera Iyer', student: 'Sneha Joshi', relation: 'Parent', date: new Date(Date.now()), time: '09:00', purpose: 'Meet warden', status: 'completed' },
-  ],
+
+  get visitors() {
+    return Store.getAll('visitors');
+  },
 
   render() {
     const filtered = this.getFiltered();
@@ -59,7 +55,7 @@ const AdminVisitors = {
               ${filtered.map((v, i) => `
                 <tr class="fade-in stagger-${Math.min(i + 1, 6)}">
                   <td style="font-weight:500">${Utils.sanitize(v.name)}</td>
-                  <td>${Utils.sanitize(v.student)}</td>
+                  <td>${Utils.sanitize(v.studentName || 'Unknown')}</td>
                   <td>${Utils.sanitize(v.relation)}</td>
                   <td style="font-size:0.85rem">${Utils.formatDate(v.date)} ${v.time}</td>
                   <td style="font-size:0.85rem">${Utils.sanitize(v.purpose)}</td>
@@ -90,17 +86,22 @@ const AdminVisitors = {
   },
 
   getFiltered() {
-    if (this.currentFilter === 'all') return this.visitors;
-    return this.visitors.filter(v => v.status === this.currentFilter);
+    const all = this.visitors.map(v => {
+      const student = Store.getById('students', v.studentId);
+      return { ...v, studentName: student ? student.name : 'Unknown' };
+    });
+    if (this.currentFilter === 'all') return all;
+    return all.filter(v => v.status === this.currentFilter);
   },
 
   getCounts() {
+    const all = this.visitors;
     return {
-      all: this.visitors.length,
-      pending: this.visitors.filter(v => v.status === 'pending').length,
-      approved: this.visitors.filter(v => v.status === 'approved').length,
-      completed: this.visitors.filter(v => v.status === 'completed').length,
-      rejected: this.visitors.filter(v => v.status === 'rejected').length,
+      all: all.length,
+      pending: all.filter(v => v.status === 'pending').length,
+      approved: all.filter(v => v.status === 'approved').length,
+      completed: all.filter(v => v.status === 'completed').length,
+      rejected: all.filter(v => v.status === 'rejected').length,
     };
   },
 
@@ -110,18 +111,21 @@ const AdminVisitors = {
   },
 
   approve(id) {
-    const visitor = this.visitors.find(v => v.id === id);
-    if (visitor) { visitor.status = 'approved'; this.refresh(); showToast('Visitor approved', 'success'); }
+    Store.update('visitors', id, { status: 'approved' });
+    this.refresh();
+    showToast('Visitor approved', 'success');
   },
 
   reject(id) {
-    const visitor = this.visitors.find(v => v.id === id);
-    if (visitor) { visitor.status = 'rejected'; this.refresh(); showToast('Visitor rejected', 'info'); }
+    Store.update('visitors', id, { status: 'rejected' });
+    this.refresh();
+    showToast('Visitor rejected', 'info');
   },
 
   markComplete(id) {
-    const visitor = this.visitors.find(v => v.id === id);
-    if (visitor) { visitor.status = 'completed'; this.refresh(); showToast('Visitor marked as completed', 'success'); }
+    Store.update('visitors', id, { status: 'completed' });
+    this.refresh();
+    showToast('Visitor marked as completed', 'success');
   },
 
   refresh() {

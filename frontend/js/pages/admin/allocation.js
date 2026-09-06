@@ -4,18 +4,59 @@
  */
 
 const AdminAllocation = {
-  allocations: [
-    { id: 1, studentId: 1, studentName: 'Ravi Kumar', hostel: 'boys', block: 'A', floor: 1, room: 101, bed: 1, date: '2025-01-20' },
-    { id: 2, studentId: 2, studentName: 'Amit Patel', hostel: 'boys', block: 'A', floor: 1, room: 101, bed: 2, date: '2025-01-20' },
-    { id: 3, studentId: 3, studentName: 'Vikram Reddy', hostel: 'boys', block: 'A', floor: 1, room: 102, bed: 1, date: '2025-01-19' },
-    { id: 4, studentId: 4, studentName: 'Rahul Verma', hostel: 'boys', block: 'A', floor: 1, room: 102, bed: 2, date: '2025-01-19' },
-    { id: 5, studentId: 5, studentName: 'Suresh Nair', hostel: 'boys', block: 'A', floor: 1, room: 102, bed: 3, date: '2025-01-18' },
-    { id: 6, studentId: 6, studentName: 'Karthik Iyer', hostel: 'boys', block: 'A', floor: 2, room: 201, bed: 1, date: '2025-01-18' },
-    { id: 7, studentId: 7, studentName: 'Priya Singh', hostel: 'girls', block: 'A', floor: 1, room: 101, bed: 1, date: '2025-01-17' },
-    { id: 8, studentId: 8, studentName: 'Neha Gupta', hostel: 'girls', block: 'A', floor: 1, room: 101, bed: 2, date: '2025-01-17' },
-    { id: 9, studentId: 9, studentName: 'Sneha Joshi', hostel: 'girls', block: 'A', floor: 2, room: 201, bed: 1, date: '2025-01-16' },
-    { id: 10, studentId: 10, studentName: 'Ananya Das', hostel: 'girls', block: 'A', floor: 2, room: 201, bed: 2, date: '2025-01-16' },
-  ],
+  allocations: [],
+
+  _loadFromStore() {
+    if (typeof Store === 'undefined') return;
+    const beds = Store.getAll('beds');
+    const students = Store.getAll('students');
+    const rooms = Store.getAll('rooms');
+    const hostels = Store.getAll('hostels');
+    this.allocations = beds.filter(b => b.status === 'occupied').map(b => {
+      const room = rooms.find(r => r.id === b.roomId);
+      const hostel = room ? hostels.find(h => h.id === room.hostelId) : null;
+      const student = students.find(s => s.id === b.studentId);
+      return {
+        id: b.id,
+        studentId: b.studentId,
+        studentName: student ? student.name : 'Unknown',
+        hostel: hostel ? (hostel.type === 'boys' ? 'boys' : 'girls') : 'boys',
+        block: room ? room.block : 'A',
+        floor: room ? room.floor : 1,
+        room: room ? room.number : 101,
+        bed: b.number,
+        date: b.allocationDate || '2025-01-20',
+      };
+    });
+  },
+
+  _generateRoomsFromStore() {
+    if (typeof Store === 'undefined') return;
+    this.rooms = [];
+    const storeRooms = Store.getAll('rooms');
+    const storeBeds = Store.getAll('beds');
+    const hostels = Store.getAll('hostels');
+
+    storeRooms.forEach(room => {
+      const hostel = hostels.find(h => h.id === room.hostelId);
+      const roomBeds = storeBeds.filter(b => b.roomId === room.id);
+      this.rooms.push({
+        id: room.id,
+        hostel: hostel ? (hostel.type === 'boys' ? 'boys' : 'girls') : 'boys',
+        hostelName: hostel ? hostel.name : 'Unknown',
+        block: room.block,
+        floor: room.floor,
+        number: room.number,
+        beds: roomBeds.map(b => ({
+          number: b.number,
+          occupied: b.status === 'occupied',
+          allocation: b.studentId ? { studentName: (Store.getById('students', b.studentId) || {}).name || 'Unknown', date: b.allocationDate } : null,
+        })),
+        totalBeds: room.capacity || 4,
+        occupiedBeds: roomBeds.filter(b => b.status === 'occupied').length,
+      });
+    });
+  },
 
   rooms: [],
   currentHostel: 'all',
@@ -24,7 +65,8 @@ const AdminAllocation = {
   selectedRoom: null,
 
   init() {
-    this.generateRooms();
+    this._loadFromStore();
+    this._generateRoomsFromStore();
     console.log('[HostelBuddy] Admin Allocation initialized');
   },
 
@@ -484,38 +526,42 @@ const AdminAllocation = {
 
   submitAllocation(e) {
     e.preventDefault();
-    const studentId = parseInt(document.getElementById('allocStudent').value);
-    const studentOption = document.getElementById('allocStudent').selectedOptions[0];
-    const studentName = studentOption?.text.split(' (')[0] || '';
-    
-    const allocation = {
-      id: Date.now(),
-      studentId,
-      studentName,
-      hostel: document.getElementById('allocHostel').value,
-      block: document.getElementById('allocBlock').value,
-      floor: parseInt(document.getElementById('allocFloor').value),
-      room: parseInt(document.getElementById('allocRoom').value),
-      bed: parseInt(document.getElementById('allocBed').value),
-      date: new Date().toISOString().split('T')[0],
-    };
+    const studentId = document.getElementById('allocStudent').value;
+    const bedId = document.getElementById('allocBed').value;
+    const hostel = document.getElementById('allocHostel').value;
+    const block = document.getElementById('allocBlock').value;
+    const floor = parseInt(document.getElementById('allocFloor').value);
+    const roomNum = parseInt(document.getElementById('allocRoom').value);
 
-    this.allocations.push(allocation);
-    
-    // Update room data
-    const room = this.rooms.find(
-      r => r.hostel === allocation.hostel && r.block === allocation.block && 
-           r.floor === allocation.floor && r.number === allocation.room
-    );
-    if (room) {
-      room.beds[allocation.bed - 1].occupied = true;
-      room.beds[allocation.bed - 1].allocation = allocation;
-      room.occupiedBeds++;
+    if (!studentId || !bedId || !hostel || !block || !floor || !roomNum) {
+      showToast('Please fill all fields', 'error');
+      return;
     }
 
-    this.closeAllocateModal();
-    this.refresh();
-    showToast('Bed allocated successfully', 'success');
+    if (typeof Store !== 'undefined') {
+      // Find the actual bed ID from Store
+      const hostelType = hostel === 'boys' ? 'boys' : 'girls';
+      const hostels = Store.getAll('hostels');
+      const hostelObj = hostels.find(h => h.type === hostelType);
+      if (!hostelObj) { showToast('Hostel not found', 'error'); return; }
+      const room = Store.getAll('rooms').find(r => r.hostelId === hostelObj.id && r.block === block && r.floor === floor && r.number === roomNum);
+      if (!room) { showToast('Room not found', 'error'); return; }
+      const bed = Store.getAll('beds').find(b => b.roomId === room.id && b.number === parseInt(bedId));
+      if (!bed) { showToast('Bed not found', 'error'); return; }
+
+      const result = Store.allocateBed(studentId, bed.id);
+      if (result.success) {
+        this._loadFromStore();
+        this._generateRoomsFromStore();
+        this.closeAllocateModal();
+        this.refresh();
+        showToast('Bed allocated successfully', 'success');
+      } else {
+        showToast(result.error, 'error');
+      }
+    } else {
+      showToast('Store not available', 'error');
+    }
   },
 
   // ============================================
@@ -531,24 +577,22 @@ const AdminAllocation = {
 
   deallocateBed(id) {
     if (!confirm('Are you sure you want to deallocate this bed?')) return;
-    
-    const alloc = this.allocations.find(a => a.id === id);
-    if (!alloc) return;
 
-    // Update room data
-    const room = this.rooms.find(
-      r => r.hostel === alloc.hostel && r.block === alloc.block && 
-           r.floor === alloc.floor && r.number === alloc.room
-    );
-    if (room) {
-      room.beds[alloc.bed - 1].occupied = false;
-      room.beds[alloc.bed - 1].allocation = null;
-      room.occupiedBeds--;
+    if (typeof Store !== 'undefined') {
+      const result = Store.deallocateBed(id);
+      if (result.success) {
+        this._loadFromStore();
+        this._generateRoomsFromStore();
+        this.refresh();
+        showToast('Bed deallocated successfully', 'info');
+      } else {
+        showToast(result.error, 'error');
+      }
+    } else {
+      this.allocations = this.allocations.filter(a => a.id !== id);
+      this.refresh();
+      showToast('Bed deallocated successfully', 'info');
     }
-
-    this.allocations = this.allocations.filter(a => a.id !== id);
-    this.refresh();
-    showToast('Bed deallocated successfully', 'info');
   },
 
   viewRoom(roomId) {

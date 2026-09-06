@@ -6,14 +6,10 @@
 const AdminComplaints = {
   currentFilter: 'all',
   searchQuery: '',
-  complaints: [
-    { id: 1, student: 'Ravi Kumar', title: 'Broken ceiling fan', category: 'Maintenance', priority: 'medium', status: 'in_progress', date: new Date(Date.now() - 172800000), updated: new Date(Date.now() - 86400000) },
-    { id: 2, student: 'Priya Singh', title: 'Water leakage in bathroom', category: 'Maintenance', priority: 'high', status: 'open', date: new Date(Date.now() - 43200000), updated: new Date(Date.now() - 43200000) },
-    { id: 3, student: 'Amit Patel', title: 'Noise disturbance at night', category: 'Noise', priority: 'low', status: 'resolved', date: new Date(Date.now() - 604800000), updated: new Date(Date.now() - 518400000) },
-    { id: 4, student: 'Neha Gupta', title: 'Dirty common area', category: 'Cleanliness', priority: 'medium', status: 'open', date: new Date(Date.now() - 259200000), updated: new Date(Date.now() - 259200000) },
-    { id: 5, student: 'Vikram Reddy', title: 'Broken window lock', category: 'Maintenance', priority: 'low', status: 'resolved', date: new Date(Date.now() - 864000000), updated: new Date(Date.now() - 691200000) },
-    { id: 6, student: 'Sneha Joshi', title: 'Security concern', category: 'Security', priority: 'high', status: 'open', date: new Date(Date.now() - 172800000), updated: new Date(Date.now() - 172800000) },
-  ],
+
+  get complaints() {
+    return Store.getAll('complaints');
+  },
 
   render() {
     const filtered = this.getFiltered();
@@ -60,7 +56,7 @@ const AdminComplaints = {
               ${filtered.map((c, i) => `
                 <tr class="fade-in stagger-${Math.min(i + 1, 6)}">
                   <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">#${c.id}</td>
-                  <td style="font-weight:500">${Utils.sanitize(c.student)}</td>
+                  <td style="font-weight:500">${Utils.sanitize(c.studentName || 'Unknown')}</td>
                   <td><span class="badge badge-${c.category === 'Maintenance' ? 'warning' : c.category === 'Security' ? 'danger' : 'info'}">${Utils.sanitize(c.category)}</span></td>
                   <td><span class="badge badge-${c.priority === 'high' ? 'danger' : c.priority === 'medium' ? 'warning' : 'success'}">${Utils.capitalize(c.priority)}</span></td>
                   <td><span class="badge ${Utils.getStatusColor(c.status)}">${c.status === 'in_progress' ? 'In Progress' : Utils.capitalize(c.status)}</span></td>
@@ -84,20 +80,25 @@ const AdminComplaints = {
   },
 
   getFiltered() {
-    let result = this.complaints;
+    const all = this.complaints.map(c => {
+      const student = Store.getById('students', c.studentId);
+      return { ...c, studentName: student ? student.name : 'Unknown' };
+    });
+    let result = all;
     if (this.currentFilter !== 'all') result = result.filter(c => c.status === this.currentFilter);
     if (this.searchQuery) {
-      result = result.filter(c => c.student.toLowerCase().includes(this.searchQuery) || c.title.toLowerCase().includes(this.searchQuery));
+      result = result.filter(c => c.studentName.toLowerCase().includes(this.searchQuery) || c.title.toLowerCase().includes(this.searchQuery));
     }
     return result;
   },
 
   getCounts() {
+    const all = this.complaints;
     return {
-      all: this.complaints.length,
-      open: this.complaints.filter(c => c.status === 'open').length,
-      in_progress: this.complaints.filter(c => c.status === 'in_progress').length,
-      resolved: this.complaints.filter(c => c.status === 'resolved').length,
+      all: all.length,
+      open: all.filter(c => c.status === 'open').length,
+      in_progress: all.filter(c => c.status === 'in_progress').length,
+      resolved: all.filter(c => c.status === 'resolved').length,
     };
   },
 
@@ -145,13 +146,9 @@ const AdminComplaints = {
   },
 
   saveStatus() {
-    const id = parseInt(document.getElementById('updateComplaintId').value);
+    const id = document.getElementById('updateComplaintId').value;
     const status = document.getElementById('newStatus').value;
-    const complaint = this.complaints.find(c => c.id === id);
-    if (complaint) {
-      complaint.status = status;
-      complaint.updated = new Date();
-    }
+    Store.update('complaints', id, { status, updated: new Date().toISOString() });
     document.getElementById('updateStatusModal').classList.add('hidden');
     this.refresh();
     showToast('Status updated successfully', 'success');

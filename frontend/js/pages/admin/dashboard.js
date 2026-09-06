@@ -4,32 +4,32 @@
  */
 
 const AdminDashboard = {
-  // Mock data
   data: {
-    stats: {
-      totalApplications: 156,
-      pendingReviews: 12,
-      allocatedBeds: { used: 142, total: 200 },
-      activeComplaints: 8,
-      todayVisitors: 7,
-      newAnnouncements: 3,
-    },
-    recentApplications: [
-      { id: 1, name: 'Ravi Kumar', email: 'ravi@uni.edu', date: new Date(Date.now() - 7200000), hostel: 'Boys Hostel A', status: 'pending' },
-      { id: 2, name: 'Priya Singh', email: 'priya@uni.edu', date: new Date(Date.now() - 86400000), hostel: 'Girls Hostel A', status: 'pending' },
-      { id: 3, name: 'Amit Patel', email: 'amit@uni.edu', date: new Date(Date.now() - 172800000), hostel: 'Boys Hostel B', status: 'approved' },
-      { id: 4, name: 'Neha Gupta', email: 'neha@uni.edu', date: new Date(Date.now() - 259200000), hostel: 'Girls Hostel B', status: 'approved' },
-      { id: 5, name: 'Vikram Reddy', email: 'vikram@uni.edu', date: new Date(Date.now() - 345600000), hostel: 'Boys Hostel A', status: 'rejected' },
-    ],
-    blockOccupancy: [
-      { name: 'Block A', total: 50, occupied: 45 },
-      { name: 'Block B', total: 50, occupied: 42 },
-      { name: 'Block C', total: 50, occupied: 38 },
-      { name: 'Block D', total: 50, occupied: 17 },
-    ],
+    stats: { totalApplications: 0, pendingReviews: 0, allocatedBeds: { used: 0, total: 0 }, activeComplaints: 0, todayVisitors: 0, newAnnouncements: 0 },
+    recentApplications: [],
+    blockOccupancy: [],
+  },
+
+  _loadFromStore() {
+    if (typeof Store === 'undefined') return;
+    const s = Store.getStats();
+    this.data.stats = {
+      totalApplications: s.totalApplications,
+      pendingReviews: s.pendingApplications,
+      allocatedBeds: { used: s.allocatedBeds, total: s.totalBeds },
+      activeComplaints: s.openComplaints,
+      todayVisitors: s.pendingVisitors,
+      newAnnouncements: s.publishedAnnouncements,
+    };
+    const students = Store.getAll('students');
+    this.data.recentApplications = Store.getAll('applications').slice(0, 5).map(app => {
+      const student = students.find(s => s.id === app.studentId);
+      return { id: app.id, name: student ? student.name : 'Unknown', email: student ? student.email : '', date: new Date(app.date), hostel: app.hostel === 'boys' ? 'Boys Hostel' : 'Girls Hostel', status: app.status };
+    });
   },
 
   render() {
+    this._loadFromStore();
     return `
       <div class="admin-dashboard">
         ${this.renderKPICards()}
