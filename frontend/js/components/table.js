@@ -26,7 +26,7 @@ function renderTable(containerId, columns, data, options = {}) {
     html += `<div class="table-container"><table class="table"><thead><tr>`;
     columns.forEach(col => {
       const sortable = col.sortable !== false ? ` style="cursor:pointer;" onclick="sortTable('${containerId}','${col.key}')"` : "";
-      const arrow = sortCol === col.key ? (sortDir === "asc" ? " ↑" : " ↓") : "";
+      const arrow = sortCol === col.key ? (sortDir === "asc" ? " \u2191" : " \u2193") : "";
       html += `<th${sortable}>${col.label}${arrow}</th>`;
     });
     if (options.actions) html += `<th>Actions</th>`;

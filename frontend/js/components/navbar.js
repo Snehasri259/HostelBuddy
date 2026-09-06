@@ -235,7 +235,6 @@ const Navbar = {
     localStorage.removeItem('hb_user');
     sessionStorage.removeItem('hb_user');
     window.location.hash = '#login';
-    window.location.reload();
   },
 
   /**

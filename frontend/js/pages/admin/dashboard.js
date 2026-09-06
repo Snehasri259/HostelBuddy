@@ -122,7 +122,7 @@ const AdminDashboard = {
               </div>
               ${card.trend ? `
                 <div class="bento-trend ${card.trendUp ? 'bento-trend--up' : 'bento-trend--down'}">
-                  ${card.trendUp ? '↑' : '↓'} ${card.trend}
+                  ${card.trendUp ? '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>' : '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'} ${card.trend}
                 </div>
               ` : ''}
               ${card.badge ? `<span class="badge ${card.badge}" style="margin-left:auto">${card.badgeText || ''}</span>` : ''}
